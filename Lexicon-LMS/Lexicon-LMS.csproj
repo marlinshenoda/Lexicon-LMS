@@ -16,4 +16,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Lexicon-LMS.Core\Lexicon-LMS.Core.csproj" />
+    <ProjectReference Include="..\Lexicon-LMS.Data\Lexicon-LMS.Data.csproj" />
+  </ItemGroup>
+
 </Project>
