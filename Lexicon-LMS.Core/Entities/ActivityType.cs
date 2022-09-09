@@ -10,13 +10,13 @@ namespace Lexicon_LMS.Core.Entities
 #nullable disable
     public class ActivityType
     {
-        public int ActivityTypeId { get; set; }
+        public int Id { get; set; }
+        
         [Required]
-        [StringLength(20)]
-        public string ActivityTypeName { get; set; } = String.Empty;
+        public string ActivityTypeName { get; set; } = string.Empty;
 
         //Navigation Properties
-        public ICollection<Activity> Activitys { get; set; } = new List<Activity>();
+        public ICollection<Activity> Activities { get; set; } = new List<Activity>();
 
     }
 }

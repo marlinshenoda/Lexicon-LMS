@@ -12,7 +12,6 @@ namespace Lexicon_LMS.Core.Entities
     {
         public int Id { get; set; }
         
-        [StringLength (20)]
         [DisplayName ("Course Name")]
         public string CourseName { get; set; }
 
@@ -26,7 +25,7 @@ namespace Lexicon_LMS.Core.Entities
 
         [DataType(DataType.Date)]
         [DisplayName("End Date")]
-        public DateTime EndDate => StartDate.AddMonths(3);
+        public DateTime EndDate { get; set; }
 
 
         public ICollection<User> User { get; set; } = new List<User>();

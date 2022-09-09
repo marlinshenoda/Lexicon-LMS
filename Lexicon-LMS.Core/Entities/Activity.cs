@@ -13,24 +13,27 @@ namespace Lexicon_LMS.Core.Entities
 #nullable disable
     public class Activity
     {
-        public int ActivityId { get; set; }   
-        public int ModuleId { get; set; }
-        public int ActivityTypeId { get; set; }
+        public int Id { get; set; }   
+        
         [Required]
         [DisplayName("Activity Name")]
-        [StringLength(20)]
         public string ActivityName { get; set; }
+
         [Required]
         [DisplayName("Description")]
         [StringLength(200)]
         public string Description { get; set; }
         [DisplayName("Start Date")]
         [DataType(DataType.Date)]
-        public DateTime StartDate { get; set; } = DateTime.Now;
+        public DateTime StartDate { get; set; }
+        
         [DataType(DataType.Date)]
         [DisplayName("End Date")]
-        public DateTime EndDate => StartDate.AddMonths(3);
+        public DateTime EndDate { get; set; }
 
+        //FK
+        public int ModuleId { get; set; }
+        public int ActivityTypeId { get; set; }
 
         //Navigation Properties
         public ICollection<Document> Documents { get; set; } = new List<Document>();

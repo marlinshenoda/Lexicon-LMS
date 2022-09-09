@@ -7,7 +7,6 @@ namespace Lexicon_LMS.Core.Entities
     {
         public int Id { get; set; }
 
-        [StringLength(20)]
         [DisplayName ("Modul Name")]
         public string ModulName { get; set; }
 
@@ -18,12 +17,15 @@ namespace Lexicon_LMS.Core.Entities
         [DataType(DataType.Date)]
         [Display(Name = "Start Date")]
         public DateTime StartDate { get; set; }
+
         [DataType(DataType.Date)]
         [Display(Name = "End Date")]
-        public DateTime EndDate => StartDate.AddDays(14);
+        public DateTime EndDate { get; set; }
+
+        
 
 
-        public ICollection<Activity> User { get; set; } = new List<Activity>();
-        public ICollection<Document> Document { get; set; } = new List<Document>();
+        public ICollection<Activity> Activities { get; set; } = new List<Activity>();
+        public ICollection<Document> Documents { get; set; } = new List<Document>();
     }
 }

@@ -7,7 +7,6 @@ namespace Lexicon_LMS.Core.Entities
     {
         public int Id { get; set; }
 
-        [StringLength(20)]
         [DisplayName("Document Name")]
         public string DocumentName { get; set; }
 
@@ -19,10 +18,15 @@ namespace Lexicon_LMS.Core.Entities
         [Display(Name = "Time Stamp")]
         public DateTime TimeStamp { get; set; } = DateTime.Now;
 
-        [StringLength(30)]
+        [StringLength(100)]
         [Display(Name = "User Information")]
         public string UserInformation { get; set; }
 
-        
+        public int UserId { get; set; }
+        public int? CourseId { get; set; }
+        public int? ModuleId { get; set; }        
+        public int? Activity { get; set; }
+
+
     }
 }
