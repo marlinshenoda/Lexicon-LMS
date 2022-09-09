@@ -9,11 +9,11 @@ namespace Lexicon_LMS.Core.Entities
         public int Id { get; set; }
 
         [DisplayName ("Modul Name")]
-        public string ModulName { get; set; }
+        public string ModulName { get; set; } = string.Empty;
 
         [StringLength(200)]
         [DisplayName ("Description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [DataType(DataType.Date)]
         [Display(Name = "Start Date")]
@@ -27,5 +27,7 @@ namespace Lexicon_LMS.Core.Entities
         //Nav Prop
         public ICollection<Activity> Activities { get; set; } = new List<Activity>();
         public ICollection<Document> Documents { get; set; } = new List<Document>();
+
+        public Course Course { get; set; }
     }
 }

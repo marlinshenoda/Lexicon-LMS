@@ -17,12 +17,12 @@ namespace Lexicon_LMS.Core.Entities
         
         [Required]
         [DisplayName("Activity Name")]
-        public string ActivityName { get; set; }
+        public string ActivityName { get; set; } = string.Empty;
 
         [Required]
-        [DisplayName("Description")]
+        [DisplayName("Description")] 
         [StringLength(200)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
         [DisplayName("Start Date")]
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
