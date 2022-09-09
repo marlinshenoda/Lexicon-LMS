@@ -3,13 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lexicon_LMS.Core.Entities
 {
+#nullable disable
     public class Module
     {
         public int Id { get; set; }
 
         [StringLength(20)]
-        [DisplayName ("Modul Name")]
-        public string ModulName { get; set; }
+        [DisplayName ("Module Name")]
+        public string ModuleName { get; set; }
 
         [StringLength(200)]
         [DisplayName ("Description")]

@@ -8,9 +8,9 @@ namespace Lexicon_LMS.Core.Entities
         public String LastName { get; set; } = String.Empty;   
         public String FullName => FirstName + LastName;
 
-        public int CourseId { get; set; }
+        public int? CourseId { get; set; }
         public ICollection<Document> Documents { get; set; } = new List<Document>();
         
 
     }
-}
+}   

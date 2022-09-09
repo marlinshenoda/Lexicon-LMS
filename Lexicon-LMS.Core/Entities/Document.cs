@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lexicon_LMS.Core.Entities
 {
+#nullable disable
     public class Document
     {
         public int Id { get; set; }
