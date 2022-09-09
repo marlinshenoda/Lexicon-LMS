@@ -1,8 +1,11 @@
-using Lexicon_LMS.Data;
+﻿using Lexicon_LMS.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<Lexicon_LMSContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Lexicon_LMSContext") ?? throw new InvalidOperationException("Connection string 'Lexicon_LMSContext' not found.")));
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

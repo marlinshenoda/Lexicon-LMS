@@ -22,168 +22,6 @@ namespace Lexicon_LMS.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.Activity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("ActivityName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ActivityTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ModuleId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityTypeId");
-
-                    b.HasIndex("ModuleId");
-
-                    b.ToTable("Activities");
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.ActivityType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("ActivityTypeName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ActivityTypes");
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.Course", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CourseName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.Document", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("ActivityId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("DocumentName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FilePath")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<bool?>("IsFinished")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("ModuleId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityId");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("ModuleId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Documents");
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.Module", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ModulName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("Modules");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -248,10 +86,6 @@ namespace Lexicon_LMS.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -303,8 +137,6 @@ namespace Lexicon_LMS.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -392,77 +224,6 @@ namespace Lexicon_LMS.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.User", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.Property<int?>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImagePicture")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasDiscriminator().HasValue("User");
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.Activity", b =>
-                {
-                    b.HasOne("Lexicon_LMS.Core.Entities.ActivityType", "ActivityType")
-                        .WithMany("Activities")
-                        .HasForeignKey("ActivityTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Lexicon_LMS.Core.Entities.Module", "Module")
-                        .WithMany("Activities")
-                        .HasForeignKey("ModuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ActivityType");
-
-                    b.Navigation("Module");
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.Document", b =>
-                {
-                    b.HasOne("Lexicon_LMS.Core.Entities.Activity", null)
-                        .WithMany("Documents")
-                        .HasForeignKey("ActivityId");
-
-                    b.HasOne("Lexicon_LMS.Core.Entities.Course", null)
-                        .WithMany("Documents")
-                        .HasForeignKey("CourseId");
-
-                    b.HasOne("Lexicon_LMS.Core.Entities.Module", null)
-                        .WithMany("Documents")
-                        .HasForeignKey("ModuleId");
-
-                    b.HasOne("Lexicon_LMS.Core.Entities.User", null)
-                        .WithMany("Documents")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.Module", b =>
-                {
-                    b.HasOne("Lexicon_LMS.Core.Entities.Course", "Course")
-                        .WithMany("Modules")
-                        .HasForeignKey("CourseId");
-
-                    b.Navigation("Course");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -512,44 +273,6 @@ namespace Lexicon_LMS.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.User", b =>
-                {
-                    b.HasOne("Lexicon_LMS.Core.Entities.Course", null)
-                        .WithMany("Users")
-                        .HasForeignKey("CourseId");
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.Activity", b =>
-                {
-                    b.Navigation("Documents");
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.ActivityType", b =>
-                {
-                    b.Navigation("Activities");
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.Course", b =>
-                {
-                    b.Navigation("Documents");
-
-                    b.Navigation("Modules");
-
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.Module", b =>
-                {
-                    b.Navigation("Activities");
-
-                    b.Navigation("Documents");
-                });
-
-            modelBuilder.Entity("Lexicon_LMS.Core.Entities.User", b =>
-                {
-                    b.Navigation("Documents");
                 });
 #pragma warning restore 612, 618
         }
