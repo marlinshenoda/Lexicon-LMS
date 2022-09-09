@@ -21,8 +21,8 @@ namespace Lexicon_LMS.Core.Entities
 
         [StringLength(100)]
         [Display(Name = "User Information")]
-        public string UserInformation { get; set; }
-
+        public string FilePath { get; set; }
+        public bool? IsFinished { get; set; }
         //Fk
         public int UserId { get; set; }
         public int? CourseId { get; set; }
