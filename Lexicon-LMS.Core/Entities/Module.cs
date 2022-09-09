@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lexicon_LMS.Core.Entities
 {
+#nullable disable
     public class Module
     {
         public int Id { get; set; }

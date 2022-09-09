@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lexicon_LMS.Core.Entities
 {
+#nullable disable
     public class Course
     {
         public int Id { get; set; }
