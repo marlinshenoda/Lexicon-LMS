@@ -14,11 +14,11 @@ namespace Lexicon_LMS.Core.Entities
         public int Id { get; set; }
         
         [DisplayName ("Course Name")]
-        public string CourseName { get; set; }
+        public string CourseName { get; set; } = string.Empty;
 
         [StringLength(200)]
         [DisplayName("Description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [DataType(DataType.Date)]
         [DisplayName("Start Date")]
