@@ -28,10 +28,9 @@ namespace Lexicon_LMS.Core.Entities
         [DisplayName("End Date")]
         public DateTime EndDate { get; set; }
 
-
-        public ICollection<User> User { get; set; } = new List<User>();
-        public ICollection<Module> Module { get; set; } = new List<Module>();
-        public ICollection<Document> Document { get; set; } = new List<Document>();
+        public ICollection<User> Users { get; set; } = new List<User>();
+        public ICollection<Module> Modules { get; set; } = new List<Module>();
+        public ICollection<Document> Documents { get; set; } = new List<Document>();
 
 
     }

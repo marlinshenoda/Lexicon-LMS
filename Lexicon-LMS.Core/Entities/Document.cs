@@ -23,10 +23,11 @@ namespace Lexicon_LMS.Core.Entities
         [Display(Name = "User Information")]
         public string UserInformation { get; set; }
 
+        //Fk
         public int UserId { get; set; }
         public int? CourseId { get; set; }
         public int? ModuleId { get; set; }        
-        public int? Activity { get; set; }
+        public int? ActivityId { get; set; }
 
 
     }

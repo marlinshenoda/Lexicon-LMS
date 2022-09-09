@@ -4,11 +4,14 @@ namespace Lexicon_LMS.Core.Entities
 {
     public class User : IdentityUser
     {
-        public String FirstName { get; set; } = String.Empty;
-        public String LastName { get; set; } = String.Empty;   
-        public String FullName => FirstName + LastName;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;   
+        public string FullName => FirstName + LastName;
 
+        //Fk
         public int? CourseId { get; set; }
+        
+        //Nav Prop
         public ICollection<Document> Documents { get; set; } = new List<Document>();
         
 

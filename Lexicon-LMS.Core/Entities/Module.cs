@@ -23,9 +23,8 @@ namespace Lexicon_LMS.Core.Entities
         [Display(Name = "End Date")]
         public DateTime EndDate { get; set; }
 
-        
 
-
+        //Nav Prop
         public ICollection<Activity> Activities { get; set; } = new List<Activity>();
         public ICollection<Document> Documents { get; set; } = new List<Document>();
     }
