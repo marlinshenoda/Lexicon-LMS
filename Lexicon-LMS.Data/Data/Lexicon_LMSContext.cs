@@ -10,18 +10,18 @@ namespace Lexicon_LMS.Data
 {
     public class Lexicon_LMSContext : IdentityDbContext
     {
-        public Lexicon_LMSContext (DbContextOptions<Lexicon_LMSContext> options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
-        public DbSet<Lexicon_LMS.Core.Entities.Activity> Activity { get; set; } = default!;
+        public DbSet<Activity> Activity { get; set; } = default!;
 
-        public DbSet<Lexicon_LMS.Core.Entities.ActivityType>? ActivityType { get; set; }
+        public DbSet<ActivityType>? ActivityType { get; set; }
 
-        public DbSet<Lexicon_LMS.Core.Entities.Course>? Course { get; set; }
+        public DbSet<Course>? Course { get; set; }
 
-        public DbSet<Lexicon_LMS.Core.Entities.Document>? Document { get; set; }
+        public DbSet<Document>? Document { get; set; }
 
         public DbSet<Lexicon_LMS.Core.Entities.Module>? Module { get; set; }
         public DbSet<Lexicon_LMS.Core.Entities.User>? User { get; set; }

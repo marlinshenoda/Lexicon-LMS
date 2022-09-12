@@ -9,7 +9,7 @@ namespace Lexicon_LMS.Extensions
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var serviceProvider = scope.ServiceProvider;
-                var db = serviceProvider.GetRequiredService<Lexicon_LMSContext>();
+                var db = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
                 //db.Database.EnsureDeleted();
                 //db.Database.Migrate();

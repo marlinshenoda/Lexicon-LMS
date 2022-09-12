@@ -12,9 +12,9 @@ namespace Lexicon_LMS.Controllers
 {
     public class CoursesController : Controller
     {
-        private readonly Lexicon_LMSContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public CoursesController(Lexicon_LMSContext context)
+        public CoursesController(ApplicationDbContext context)
         {
             _context = context;
         }
