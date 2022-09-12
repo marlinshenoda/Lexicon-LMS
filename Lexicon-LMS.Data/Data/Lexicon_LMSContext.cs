@@ -10,7 +10,7 @@ namespace Lexicon_LMS.Data
 {
     public class Lexicon_LMSContext : IdentityDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public Lexicon_LMSContext(DbContextOptions<Lexicon_LMSContext> options)
             : base(options)
         {
         }
@@ -23,7 +23,7 @@ namespace Lexicon_LMS.Data
 
         public DbSet<Document>? Document { get; set; }
 
-        public DbSet<Lexicon_LMS.Core.Entities.Module>? Module { get; set; }
-        public DbSet<Lexicon_LMS.Core.Entities.User>? User { get; set; }
+        public DbSet<Module>? Module { get; set; }
+        public DbSet<User>? User { get; set; }
     }
 }
