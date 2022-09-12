@@ -13,7 +13,7 @@ namespace Lexicon_LMS.Data
             : base(options)
         {
         }
-
+        public DbSet<User>? Users { get; set; }
         public DbSet<Activity> Activity { get; set; } = default!;
 
         public DbSet<ActivityType>? ActivityType { get; set; }

@@ -15,7 +15,7 @@ namespace Lexicon_LMS.Data
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var service = scope.ServiceProvider;
-                var db = service.GetRequiredService<ApplicationDbContext>();
+                var db = service.GetRequiredService<Lexicon_LMSContext>();
                 try
                 {
                     await SeedDataDB.SeedTheData(db, service);

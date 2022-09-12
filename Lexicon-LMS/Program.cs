@@ -1,20 +1,21 @@
-﻿using Lexicon_LMS.Data;
+﻿using Lexicon_LMS.Core.Entities;
+using Lexicon_LMS.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<Lexicon_LMSContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Lexicon_LMSContext") ?? throw new InvalidOperationException("Connection string 'Lexicon_LMSContext' not found.")));
+//builder.Services.AddDbContext<Lexicon_LMSContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("Lexicon_LMSContext") ?? throw new InvalidOperationException("Connection string 'Lexicon_LMSContext' not found.")));
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<Lexicon_LMSContext>(options =>
+      options.UseSqlServer(builder.Configuration.GetConnectionString("Lexicon_LMSContext") ?? throw new InvalidOperationException("Connection string 'Lexicon_LMSContext' not found.")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<Lexicon_LMSContext>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
