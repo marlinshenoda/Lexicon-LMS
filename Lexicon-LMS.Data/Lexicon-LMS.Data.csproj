@@ -19,8 +19,4 @@
     <ProjectReference Include="..\Lexicon-LMS.Core\Lexicon-LMS.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
-
 </Project>
