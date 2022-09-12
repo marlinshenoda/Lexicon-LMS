@@ -24,6 +24,5 @@ namespace Lexicon_LMS.Data
         public DbSet<Document>? Document { get; set; }
 
         public DbSet<Module>? Module { get; set; }
-        public DbSet<User>? User { get; set; }
     }
 }
