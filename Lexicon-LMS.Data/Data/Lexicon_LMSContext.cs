@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Lexicon_LMS.Core.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Lexicon_LMS.Data
 {
-    public class Lexicon_LMSContext : DbContext
+    public class Lexicon_LMSContext : IdentityDbContext
     {
         public Lexicon_LMSContext (DbContextOptions<Lexicon_LMSContext> options)
             : base(options)
@@ -23,5 +24,6 @@ namespace Lexicon_LMS.Data
         public DbSet<Lexicon_LMS.Core.Entities.Document>? Document { get; set; }
 
         public DbSet<Lexicon_LMS.Core.Entities.Module>? Module { get; set; }
+        public DbSet<Lexicon_LMS.Core.Entities.User>? User { get; set; }
     }
 }
