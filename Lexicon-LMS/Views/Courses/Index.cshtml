@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Lexicon_LMS.Core.Entities.Course>
+﻿@model IEnumerable<Course>
 
 @{
     ViewData["Title"] = "Index";
@@ -44,7 +44,7 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Details"   asp-route-id="@item.Id">Show Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>

@@ -8,7 +8,23 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<div class="accordion" id="accordionExample">
+         <div class="panel-group" id="accordionY">
+            @{int ij = 1;}
+            
+   @foreach (var item in Model) {
+           <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@ij"  aria-expanded="true" aria-controls="collapseOne">
+
+    <b  runat="server"> Module @item.Id:  @item.Module.ModulName  </b>
+      </button>
+    </h2>
+    </div>
+
+    <div id="collapse_@ij" class="accordion-collapse collapse show " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <table class="table">
     <thead>
         <tr>
             <th>
@@ -33,32 +49,42 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var input in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ActivityName)
+                @Html.DisplayFor(modelItem => input.ActivityName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
+                @Html.DisplayFor(modelItem => input.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
+                @Html.DisplayFor(modelItem => input.StartDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
+                @Html.DisplayFor(modelItem => input.EndDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ActivityType.ActivityTypeName)
+                @Html.DisplayFor(modelItem => input.ActivityType.ActivityTypeName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Module.Id)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+         
         </tr>
 }
     </tbody>
 </table>
+
+    <div>
+    <a asp-action="Edit" asp-route-id="@item?.Id">Edit</a> 
+</div>
+          
+</div>
+ 
+      </div> ij++;}  
+    </div>    
+    </div>
+ 
+
+
+
