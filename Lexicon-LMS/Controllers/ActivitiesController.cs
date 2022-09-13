@@ -24,6 +24,11 @@ namespace Lexicon_LMS.Controllers
         {
             var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
             return View(await lexicon_LMSContext.ToListAsync());
+        }  
+        public async Task<IActionResult> PartialView()
+        {
+            var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
+            return View(await lexicon_LMSContext.ToListAsync());
         }
 
         // GET: Activities/Details/5
