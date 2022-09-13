@@ -14,5 +14,56 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    background-size: auto;
+    margin-bottom: 60px;
+    background: url('https://www.rd.com/wp-content/uploads/2020/07/GettyImages-697987486.jpg')
+}
+
+.navbar {
+    background-color: #D9D9D9;
+
+}
+
+.navbardown {
+    height: 50px;
+    background-color: #ff0000;
+}
+.navbardownone {
+    background-color: blue;
+}
+
+.imagecontainer{
+    max-width: auto;
+    height: auto;
+}
+
+
+
+
+.divider:after,
+.divider:before {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #eee;
+}
+
+.h-custom {
+    height: calc(70% - 37px);
+}
+
+@media (max-width: 40px) {
+    .h-custom {
+        height: 100%;
+    }
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: #D9D9D9;
+    text-align: center;
 }
