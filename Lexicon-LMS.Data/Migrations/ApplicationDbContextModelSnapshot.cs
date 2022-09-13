@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Lexicon_LMS.Data.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(Lexicon_LMSContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -161,7 +161,7 @@ namespace Lexicon_LMS.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("CourseId")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -458,7 +458,9 @@ namespace Lexicon_LMS.Data.Migrations
                 {
                     b.HasOne("Lexicon_LMS.Core.Entities.Course", "Course")
                         .WithMany("Modules")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
                 });

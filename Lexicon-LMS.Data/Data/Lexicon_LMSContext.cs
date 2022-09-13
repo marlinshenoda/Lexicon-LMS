@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Lexicon_LMS.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class Lexicon_LMSContext : IdentityDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public Lexicon_LMSContext(DbContextOptions<Lexicon_LMSContext> options)
             : base(options)
         {
         }
