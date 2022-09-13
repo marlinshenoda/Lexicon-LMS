@@ -6,7 +6,7 @@
 
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <button class="btn btn-success" asp-action="Create">Add New Activity</button>
 </p>
 <div class="accordion" id="accordionExample">
          <div class="panel-group" id="accordionY">
@@ -15,14 +15,14 @@
    @foreach (var item in Model) {
            <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
-      <button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@ij"  aria-expanded="true" aria-controls="collapseOne">
+      <button class="accordion-button accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@ij" aria-expanded="false"  aria-controls="collapseOne">
 
     <b  runat="server"> Module @item.Id:  @item.Module.ModulName  </b>
       </button>
     </h2>
     </div>
 
-    <div id="collapse_@ij" class="accordion-collapse collapse show " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+    <div id="collapse_@ij" class="accordion-collapse collapse  " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
       <div class="accordion-body">
         <table class="table">
     <thead>
