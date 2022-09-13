@@ -4,16 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Lexicon_LMS.Core.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Lexicon_LMS.Data
 {
-    public class Lexicon_LMSContext : DbContext
+    public class Lexicon_LMSContext : IdentityDbContext<User, IdentityRole, string>
     {
         public Lexicon_LMSContext (DbContextOptions<Lexicon_LMSContext> options)
             : base(options)
         {
         }
-        public DbSet<User>? Users { get; set; }
+        //public DbSet<User>? Users { get; set; }
         public DbSet<Activity> Activity { get; set; } = default!;
 
         public DbSet<ActivityType>? ActivityType { get; set; }

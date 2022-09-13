@@ -2,8 +2,10 @@
 using Bogus;
 using Bogus.DataSets;
 using FluentAssertions.Common;
+using FluentAssertions.Equivalency.Tracing;
 using Lexicon_LMS.Core.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -18,32 +20,35 @@ namespace Lexicon_LMS.Data
         private static Lexicon_LMSContext db = default;
         private static RoleManager<IdentityRole> roleManager;
         private static UserManager<User> userManager;
-        public static async Task SeedTheData(Lexicon_LMSContext context, IServiceProvider services, IServiceProvider service)
+        public static async Task SeedTheData(Lexicon_LMSContext context, IServiceProvider services)
         {
             if (context == null) throw new ArgumentNullException(nameof(db));
             db = context;
-            if(db.Users.Count()< 1)
+            roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            userManager = services.GetRequiredService<UserManager<User>>();
+
+
+            if (db.Roles.Count() < 1)
             {
-                roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                userManager = services.GetRequiredService<UserManager<User>>();
-
-
                 var roleNames = new[] { "Student", "Teacher" };
 
-                await AddRolesAsync(roleNames);   
-
+                await AddRolesAsync(roleNames);
+            }
+            var teachers = userManager.GetUsersInRoleAsync("Teacher").Result.ToList();
+            if (teachers.Count() < 1)
+            {        
                 var teacherEmail = "teacher@lms.se";
-                string adminPW = "TeacherPW123";
+                string adminPW = "TeacherPW123!";
 
 
-                var admin = await AddAdminAsync(teacherEmail, adminPW);
+                var teacher = await AddAdminAsync(teacherEmail, adminPW);
 
-                await AddToRolesAsync(admin, roleNames);
+                await AddToRoleAsync(teacher, "Teacher");
             }
 
             if (db.Course.Count() < 1)
             {
-                var Courses = GetCourses();
+                var Courses = GetCoursesAsync();
                 await db.AddRangeAsync(Courses);
             }
 
@@ -56,7 +61,7 @@ namespace Lexicon_LMS.Data
 
             if (found != null) return null!;
 
-            var admin = new User
+            var teatcher = new User
             {
                 FirstName = "Adam",
                 LastName = "Aven",
@@ -65,10 +70,10 @@ namespace Lexicon_LMS.Data
                 EmailConfirmed = true
             };
 
-            var result = await userManager.CreateAsync(admin, adminPW);
+            var result = await userManager.CreateAsync(teatcher, adminPW);
             if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
 
-            return admin;
+            return teatcher;
         }
         private static async Task AddRolesAsync(string[] roleNames)
         {
@@ -82,17 +87,15 @@ namespace Lexicon_LMS.Data
             }
         }
 
-        private static async Task AddToRolesAsync(User teatcher, string[] roleNames)
+        private static async Task AddToRoleAsync(User user, string roleName)
         {
-            foreach (var role in roleNames)
-            {
-                if (await userManager.IsInRoleAsync(teatcher, role)) continue;
-                var result = await userManager.AddToRoleAsync(teatcher, role);
-                if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
-            }
+            
+            var result = await userManager.AddToRoleAsync(user, roleName);
+            if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
+            
         }
 
-        private static IEnumerable<Course> GetCourses()
+        private static async Task<IEnumerable<Course>> GetCoursesAsync()
         {
             var faker = new Faker("sv");
 
@@ -106,16 +109,44 @@ namespace Lexicon_LMS.Data
                     CourseName = title,
                     StartDate = DateTime.Now.AddDays(faker.Random.Int(-5, 5)),
                     EndDate = DateTime.Now.AddDays(faker.Random.Int(10, 15)),
-                    Description = "Denna kursen har lektioner innom " + title,
+                    Description = "Denna kursen har lektioner och studier innom " + title,
                     Modules = GetModules(title),
                     Documents = GetDocuments(title),
-                    //Users = GetStudnetUsers(),
+                    Users = GetStudnetUsers(),
                 };
+
+                foreach(var user in temp.Users)
+                {
+                    await AddToRoleAsync(user, "Student");
+                }
 
                 Courses.Add(temp);
             }
 
             return Courses;
+        }
+
+        private static ICollection<Module> GetModules(string coursetitle)
+        {
+            var faker = new Faker("sv");
+            var Modules = new List<Module>();
+            int num = faker.Random.Int(3, 6);
+
+            for (int i = 0; i < num; i++)
+            {
+                var title = faker.Hacker.Verb();
+                var temp = new Module
+                {
+                    ModulName = coursetitle + "-" + title,
+                    Description = "Dena module har info innom " + title,
+                    Activities = GetActivities(title),
+                    StartDate = DateTime.Now.AddDays(faker.Random.Int(10, 15)),
+                };
+
+                Modules.Add(temp);
+            }
+
+            return Modules;
         }
 
         private static ICollection<Document> GetDocuments(string coursetitle)
@@ -141,27 +172,28 @@ namespace Lexicon_LMS.Data
             return Documents;
         }
 
-        private static ICollection<Module> GetModules(string coursetitle)
+        private static ICollection<User> GetStudnetUsers()
         {
             var faker = new Faker("sv");
-            var Modules = new List<Module>();
-            int num = faker.Random.Int(3, 6);
+            var Users = new List<User>();
+            int num = faker.Random.Int(7, 23);
+            string FName = faker.Name.FirstName();
+            string LName = faker.Name.LastName();
 
             for (int i = 0; i < num; i++)
             {
-                var title = faker.Hacker.Verb();
-                var temp = new Module
+                var temp = new User
                 {
-                    ModulName = coursetitle + "-" + title,
-                    Description = "Dena module har info innom " + title,
-                    Activities = GetActivities(title),
-                    StartDate = DateTime.Now.AddDays(faker.Random.Int(10, 15)),
+                    FirstName = FName,
+                    LastName = LName,
+                    UserName = FName+"."+LName,
+                    Email = FName+"."+LName +"@email.com",
                 };
 
-                Modules.Add(temp);
+                Users.Add(temp);
             }
 
-            return Modules;
+            return Users;
         }
 
         private static ICollection<Activity> GetActivities(string mdouletitle)
