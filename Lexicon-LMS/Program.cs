@@ -14,19 +14,12 @@ builder.Services.AddDbContext<Lexicon_LMSContext>(options =>
       options.UseSqlServer(builder.Configuration.GetConnectionString("Lexicon_LMSContext") ?? throw new InvalidOperationException("Connection string 'Lexicon_LMSContext' not found.")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<Lexicon_LMSContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<User>(options => 
 options.SignIn.RequireConfirmedAccount = true
 )
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<Lexicon_LMSContext>();
 
-builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<Lexicon_LMSContext>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
