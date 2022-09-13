@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Lexicon_LMS.Core.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Lexicon_LMS.Data
 {
-    public class Lexicon_LMSContext : IdentityDbContext<User>
+    public class Lexicon_LMSContext : IdentityDbContext<User, IdentityRole, string>
     {
-        public Lexicon_LMSContext(DbContextOptions<Lexicon_LMSContext> options)
+        public Lexicon_LMSContext (DbContextOptions<Lexicon_LMSContext> options)
             : base(options)
         {
         }

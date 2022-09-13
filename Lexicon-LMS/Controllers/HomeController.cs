@@ -15,7 +15,8 @@ namespace Lexicon_LMS.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            //return View();
+            return LocalRedirect("~/Identity/Account/Login");
         }
 
         public IActionResult Privacy()
