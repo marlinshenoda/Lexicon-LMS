@@ -16,11 +16,12 @@ html {
 body {
     background-size: auto;
     margin-bottom: 60px;
-    background: url('https://img.freepik.com/free-photo/enthusiastic-asian-girl-smiles-shows-thumbs-up-looks-happy-saying-yes-approve-recommend-smth-standing-white-background_1258-98163.jpg?w=2000')
+    background: url('https://www.rd.com/wp-content/uploads/2020/07/GettyImages-697987486.jpg')
 }
 
 .navbar {
     background-color: #D9D9D9;
+
 }
 
 .navbardown {
@@ -36,9 +37,7 @@ body {
     height: auto;
 }
 
-.footer{
-    background-color: #D9D9D9;
-}
+
 
 
 .divider:after,
@@ -57,4 +56,14 @@ body {
     .h-custom {
         height: 100%;
     }
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: #D9D9D9;
+    text-align: center;
 }
