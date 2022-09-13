@@ -92,7 +92,6 @@ namespace Lexicon_LMS.Data
             
             var result = await userManager.AddToRoleAsync(user, roleName);
             if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
-            
         }
 
         private static async Task<IEnumerable<Course>> GetCoursesAsync()
