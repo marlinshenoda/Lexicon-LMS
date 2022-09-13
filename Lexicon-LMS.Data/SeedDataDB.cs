@@ -149,7 +149,7 @@ namespace Lexicon_LMS.Data
 
                 foreach(var user in temp.Users)
                 {
-                    await userManager.CreateAsync(user, "TeacherPW123!");
+                    await userManager.CreateAsync(user, "StudentPW123!");
                     await AddToRoleAsync(user, "Student");
                 }
 
