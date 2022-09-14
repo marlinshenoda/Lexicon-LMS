@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Data;
+using AutoMapper;
+using Lexicon_LMS.Core.Entities.ViewModel;
 
 namespace Lexicon_LMS.Controllers
 {
     public class ActivitiesController : Controller
     {
         private readonly Lexicon_LMSContext _context;
+        private readonly IMapper mapper;
 
-        public ActivitiesController(Lexicon_LMSContext context)
+        public ActivitiesController(Lexicon_LMSContext context, IMapper mapper)
         {
             _context = context;
+            this.mapper = mapper;
+
         }
 
         // GET: Activities
@@ -29,6 +34,20 @@ namespace Lexicon_LMS.Controllers
         {
             var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
             return View(await lexicon_LMSContext.ToListAsync());
+            //var viewModel = await mapper.ProjectTo<TeacherViewModel>(_context.Module.Include(a => a.Activities).Include(a => a.Course))
+            //     .ToListAsync();
+
+            //return View(viewModel);
+            //var model = _context.Activity
+            // .Include(m => m.Module)
+            // .Select(m => new TeacherViewModel
+            // {
+            //     ModuleList = m.ModuleId,
+            //     ActivityList = m.Id,
+            // });
+
+            //return View(await model.ToListAsync());
+
         }
 
         // GET: Activities/Details/5

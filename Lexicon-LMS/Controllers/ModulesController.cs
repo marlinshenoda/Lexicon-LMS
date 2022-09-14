@@ -88,7 +88,7 @@ namespace Lexicon_LMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ModulName,Description,StartDate,EndDate")] Module @module)
+        public async Task<IActionResult> Edit(int id,  Module @module)
         {
             if (id != @module.Id)
             {
