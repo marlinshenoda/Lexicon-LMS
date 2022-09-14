@@ -7,22 +7,35 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace Lexicon_LMS.Controllers
 {
     public class ActivitiesController : Controller
     {
         private readonly Lexicon_LMSContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public ActivitiesController(Lexicon_LMSContext context)
+        public ActivitiesController(UserManager<User> userManager, Lexicon_LMSContext context)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Activities
         public async Task<IActionResult> Index()
         {
+            
+            var logedinUser = _userManager.GetUserAsync(User).Result;
             var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
+            if (logedinUser != null)
+            {
+                //var usermodules = _context.Course.Include(a => a.Users).Include(a => a.Modules).Where(a => a.Users.Equals(logedinUser)).Select(a => a.Modules);
+                //lexicon_LMSContext = (Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Activity, Module>)lexicon_LMSContext.Where(a => a.Module.Equals(usermodules));
+            }
+                
+            
+            //var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
             return View(await lexicon_LMSContext.ToListAsync());
         }
 
