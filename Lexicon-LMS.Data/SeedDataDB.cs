@@ -78,7 +78,6 @@ namespace Lexicon_LMS.Data
                 UserName = teacherEmail,
                 Email = teacherEmail,
                 EmailConfirmed = true,
-                LockoutEnabled = false,
             };
 
             var result = await userManager.CreateAsync(teatcher, adminPW);
@@ -226,10 +225,9 @@ namespace Lexicon_LMS.Data
                     {
                         FirstName = FName,
                         LastName = LName,
-                        UserName = FName + "." + LName,
+                        UserName = FName + "." + LName + "@email.com",
                         Email = FName + "." + LName + "@email.com",
-                        EmailConfirmed = true,
-                        LockoutEnabled = false,
+                        EmailConfirmed = true
                     };
 
                     Users.Add(temp);
