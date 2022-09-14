@@ -28,16 +28,7 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> Index()
         {
             
-            var logedinUser = _userManager.GetUserAsync(User).Result;
             var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
-            if (logedinUser != null)
-            {
-                //var usermodules = _context.Course.Include(a => a.Users).Include(a => a.Modules).Where(a => a.Users.Equals(logedinUser)).Select(a => a.Modules);
-                //lexicon_LMSContext = (Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Activity, Module>)lexicon_LMSContext.Where(a => a.Module.Equals(usermodules));
-            }
-                
-            
-            //var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
             return View(await lexicon_LMSContext.ToListAsync());
         }  
         public async Task<IActionResult> PartialView()
