@@ -15,8 +15,8 @@ namespace Lexicon_LMS.Controllers
 
         public IActionResult Index()
         {
-            //return View();
-            return LocalRedirect("~/Identity/Account/Login");
+           // return View();
+           return LocalRedirect("~/Identity/Account/Login");
         }
 
         public IActionResult Privacy()
@@ -29,5 +29,6 @@ namespace Lexicon_LMS.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
     }
 }
