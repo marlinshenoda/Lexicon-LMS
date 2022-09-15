@@ -20,5 +20,8 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
         public DateTime EndDate { get; set; }
         [DisplayName("Activity Type")]
         public string ActivityType { get; set; }
+
+        public string? ModelName { get; set; }
+
     }
 }

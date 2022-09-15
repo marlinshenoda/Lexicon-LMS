@@ -14,7 +14,6 @@
             <div class="navbardown">
             </div>
             <div class="container-fluid m-0 p-0">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"></a>
                 <div class="m-0 p-0">
                     <a href='' target='_blank'><img src='https://i.postimg.cc/sgWPSffd/Logotype-2.png' style="width: auto; height: 75px;" border='0' alt='Logotype-2' /></a>
                 </div>
@@ -25,21 +24,16 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Activities" asp-action="PartialView">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Courses" asp-action="Index">Courses</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Activities" asp-action="Index">Activities</a>
-                        </li> 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Modules" asp-action="Index">Modules</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Students" asp-action="Index">Students</a>
-                        </li>
+                        @if (User.IsInRole("Teacher"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Courses" asp-action="Index">Courses</a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Student"))
+                        {
+                            
+                        }
                     </ul>
 
                     <partial name="_LoginPartial" />
@@ -61,7 +55,7 @@
 </body>
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2022 - Lexicon_LMS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2022 - Lexicon_LMS
     </div>
 </footer>
 </html>
