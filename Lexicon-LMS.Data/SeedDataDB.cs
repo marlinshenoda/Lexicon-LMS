@@ -54,7 +54,6 @@ namespace Lexicon_LMS.Data
             }
 
 
-
             if (db.Course.Count() < 1)
             {
                 var AT = db.ActivityType.ToList();
