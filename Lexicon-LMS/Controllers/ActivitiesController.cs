@@ -11,6 +11,7 @@ using AutoMapper;
 using Lexicon_LMS.Core.Entities.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lexicon_LMS.Controllers
 {
