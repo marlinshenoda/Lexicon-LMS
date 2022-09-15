@@ -17,12 +17,14 @@ namespace Lexicon_LMS.Controllers
     public class ActivitiesController : Controller
     {
         private readonly Lexicon_LMSContext _context;
+        private readonly UserManager<User> _userManager;
 
         private readonly IMapper mapper;
 
-        public ActivitiesController(Lexicon_LMSContext context, IMapper mapper)
+        public ActivitiesController(UserManager<User> userManager, Lexicon_LMSContext context, IMapper mapper)
         {
             _context = context;
+            _userManager = userManager;
             this.mapper = mapper;
 
         }
