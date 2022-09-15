@@ -28,6 +28,7 @@ var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
+app.SeedDataAsync().GetAwaiter().GetResult();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
