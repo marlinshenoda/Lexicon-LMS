@@ -11,6 +11,7 @@ using AutoMapper;
 using Lexicon_LMS.Core.Entities.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -44,10 +45,14 @@ namespace Lexicon_LMS.Controllers
                 .ThenInclude(a => a.ActivityType)
                 .FirstOrDefaultAsync(c => c.Id == logedinUser.CourseId);
 
-                var activities = course.Modules.SelectMany(x => new ActivityListViewModel
+                var activities = course.Modules.SelectMany(m => m.Activities).Select(x => new ActivityListViewModel
                 {
                     Id = x.Id,
-                    ActivityType =x.
+                    ActivityType = x.ActivityType.ActivityTypeName,
+                    StartDate = x.StartDate,
+                    EndDate = x.EndDate,
+                    Name = x.ActivityName,
+                    ModelName = x.Module.ModulName
 
                 }).ToList();
 
