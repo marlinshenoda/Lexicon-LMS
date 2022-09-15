@@ -34,17 +34,22 @@ namespace Lexicon_LMS.Controllers
         {            
             var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
             var viewModel = await mapper.ProjectTo<ActivityListViewModel>(_context.Activity.Include(a => a.ActivityType).Include(a => a.Module))
-                .OrderByDescending(s => s.Id)
+                .OrderBy(s => s.Id)
                 .ToListAsync();
             if (logedinUser != null && logedinUser.CourseId!=null)
             {
-                var course = await mapper.ProjectTo<CourseViewModel>(_context.Course
+                var course = await _context.Course
                 .Include(c => c.Modules)
                 .ThenInclude(m => m.Activities)
-                .ThenInclude(a => a.ActivityType))
+                .ThenInclude(a => a.ActivityType)
                 .FirstOrDefaultAsync(c => c.Id == logedinUser.CourseId);
 
-                var activities = course.Modules.SelectMany(m => m.Activities).ToList();
+                var activities = course.Modules.SelectMany(x => new ActivityListViewModel
+                {
+                    Id = x.Id,
+                    ActivityType =x.
+
+                }).ToList();
 
                 return View(activities);
 
