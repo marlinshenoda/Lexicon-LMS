@@ -9,74 +9,80 @@
     <a class="btn btn-success" asp-action="Create">Add New Activity</a>
 </p>
 <div class="accordion" id="accordionExample">
-         <div class="panel-group" id="accordionY">
-            @{int ij = 1;}
-            
-   @foreach (var item in Model) {
-           <div class="accordion-item">
-    <h2 class="accordion-header" id="headingOne">
-      <button class="accordion-button accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@ij" aria-expanded="false"  aria-controls="collapseOne">
+    <div class="panel-group" id="accordionY">
+        @{
+            int ij = 1;
+        }
 
-    <b  runat="server"> Module @item.Id:  @item.ModelName  </b>
-      </button>
-    </h2>
+        @foreach (var item in Model)
+        {
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@ij" aria-expanded="false" aria-controls="collapseOne">
+
+                        <b runat="server"> Module @item.Id:  @item.ModelName  </b>
+                    </button>
+                </h2>
+            </div>
+
+            <div id="collapse_@ij" class="accordion-collapse collapse  " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </th>
+
+                                <th>
+                                    @Html.DisplayNameFor(model => model.StartDate)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.EndDate)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.ActivityType)
+                                </th>
+
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var input in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => input.Name)
+                                    </td>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => input.StartDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => input.EndDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => input.ActivityType)
+                                    </td>
+
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <div>
+                        <a asp-action="Edit" asp-route-id="@item?.Id">Edit</a>
+                    </div>
+
+                </div>
+
+            </div>
+            ij++;
+        }
     </div>
-
-    <div id="collapse_@ij" class="accordion-collapse collapse  " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-      <div class="accordion-body">
-        <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-         
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ActivityType)
-            </th>
-          
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var input in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => input.Name)
-            </td>
-          
-            <td>
-                @Html.DisplayFor(modelItem => input.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => input.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => input.ActivityType)
-            </td>
-
-         
-        </tr>
-}
-    </tbody>
-</table>
-
-    <div>
-    <a asp-action="Edit" asp-route-id="@item?.Id">Edit</a> 
 </div>
-          
-</div>
- 
-      </div> ij++;}  
-    </div>    
-    </div>
- 
+
 
 
 

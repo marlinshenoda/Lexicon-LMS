@@ -16,7 +16,11 @@ namespace Lexicon_LMS.Data
         public MapperProfile()
         {
             CreateMap<TeacherModuleViewModel, Module>();
-            CreateMap<Activity,ActivityListViewModel>();
+            CreateMap<TeacherViewModel, Activity>();
+            CreateMap<ActivityListViewModel, Activity>();
+            CreateMap<Activity, ActivityListViewModel>();
+            CreateMap<CourseViewModel, Course>();
+            CreateMap<Course, CourseViewModel>();
 
         }
 
