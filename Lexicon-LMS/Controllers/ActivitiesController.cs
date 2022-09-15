@@ -11,6 +11,7 @@ using AutoMapper;
 using Lexicon_LMS.Core.Entities.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Lexicon_LMS.Controllers
@@ -34,7 +35,9 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> Index()
         {            
             var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
-            IIncludableQueryable<Activity,Module> lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
+            var viewModel = await mapper.ProjectTo<ActivityListViewModel>(_context.Activity.Include(a => a.ActivityType).Include(a => a.Module))
+                .OrderBy(s => s.Id)
+                .ToListAsync();
             if (logedinUser != null && logedinUser.CourseId!=null)
             {
                 var course = await _context.Course
@@ -43,16 +46,23 @@ namespace Lexicon_LMS.Controllers
                 .ThenInclude(a => a.ActivityType)
                 .FirstOrDefaultAsync(c => c.Id == logedinUser.CourseId);
 
-                var activities = course.Modules.SelectMany(m => m.Activities).ToList();
-       
+                var activities = course.Modules.SelectMany(m => m.Activities).Select(x => new ActivityListViewModel
+                {
+                    Id = x.Id,
+                    ActivityType = x.ActivityType.ActivityTypeName,
+                    StartDate = x.StartDate,
+                    EndDate = x.EndDate,
+                    Name = x.ActivityName,
+                    ModelName = x.Module.ModulName
+
+                }).ToList();
 
                 return View(activities);
 
-            }             
-            
-            //var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
-            return View(await lexicon_LMSContext.ToListAsync());
+            }         
+            return View(viewModel);
         }
+
 
         // GET: Activities/Details/5
         public async Task<IActionResult> Details(int? id)

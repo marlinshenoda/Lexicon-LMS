@@ -118,7 +118,7 @@ namespace Lexicon_LMS.Controllers
                 UserName = x.UserName,
                 ImagePicture = x.ImagePicture
 
-            }) ;
+            });
         }
     }
 }
