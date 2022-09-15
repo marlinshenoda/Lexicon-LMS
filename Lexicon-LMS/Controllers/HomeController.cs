@@ -1,4 +1,5 @@
 ﻿using Lexicon_LMS.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -12,11 +13,10 @@ namespace Lexicon_LMS.Controllers
         {
             _logger = logger;
         }
-
+        [Authorize]
         public IActionResult Index()
         {
-            //return View();
-            return LocalRedirect("~/Identity/Account/Login");
+            return View();
         }
 
         public IActionResult Privacy()
