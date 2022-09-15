@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -24,16 +25,22 @@ namespace Lexicon_LMS.Controllers
 
         // GET: Activities
         public async Task<IActionResult> Index()
-        {
-            
-            //var logedinUser = _userManager.GetUserAsync(User).Result;
-            var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
-            //if (logedinUser != null)
-            //{
-                //var usermodules = _context.Course.Include(a => a.Users).Include(a => a.Modules).Where(a => a.Users.Equals(logedinUser)).Select(a => a.Modules);
-                //lexicon_LMSContext = (Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Activity, Module>)lexicon_LMSContext.Where(a => a.Module.Equals(usermodules));
-            //}
-                
+        {            
+            var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
+            IIncludableQueryable<Activity,Module> lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
+            if (logedinUser != null && logedinUser.CourseId!=null)
+            {
+                var course = await _context.Course
+                .Include(c => c.Modules)
+                .ThenInclude(m => m.Activities)
+                .ThenInclude(a => a.ActivityType)
+                .FirstOrDefaultAsync(c => c.Id == logedinUser.CourseId);
+
+                var activities = course.Modules.SelectMany(m => m.Activities).ToList();
+
+                return View(activities);
+
+            }             
             
             //var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
             return View(await lexicon_LMSContext.ToListAsync());
