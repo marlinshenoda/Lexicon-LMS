@@ -33,7 +33,9 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> Index()
         {            
             var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
-            IIncludableQueryable<Activity,Module> lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
+            var viewModel = await mapper.ProjectTo<ActivityListViewModel>(_context.Activity.Include(a => a.ActivityType).Include(a => a.Module))
+                .OrderByDescending(s => s.Id)
+                .ToListAsync();
             if (logedinUser != null && logedinUser.CourseId!=null)
             {
                 var course = await _context.Course
@@ -50,6 +52,18 @@ namespace Lexicon_LMS.Controllers
             
             //var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
             return View(await lexicon_LMSContext.ToListAsync());
+                var activities = course.Modules.SelectMany(m => m.Activities);               
+
+                return View(ToActiviteViewModel(activities));
+
+            }            
+            //var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
+            return View(viewModel);
+        }
+
+        private string? ToActiviteViewModel(IEnumerable<Activity> activities)
+        {
+            throw new NotImplementedException();
         }
 
         // GET: Activities/Details/5
