@@ -9,6 +9,8 @@ using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Data;
 using AutoMapper;
 using Lexicon_LMS.Core.Entities.ViewModel;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -26,29 +28,25 @@ namespace Lexicon_LMS.Controllers
 
         // GET: Activities
         public async Task<IActionResult> Index()
-        {
+        {            
+            var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
+            IIncludableQueryable<Activity,Module> lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
+            if (logedinUser != null && logedinUser.CourseId!=null)
+            {
+                var course = await _context.Course
+                .Include(c => c.Modules)
+                .ThenInclude(m => m.Activities)
+                .ThenInclude(a => a.ActivityType)
+                .FirstOrDefaultAsync(c => c.Id == logedinUser.CourseId);
+
+                var activities = course.Modules.SelectMany(m => m.Activities).ToList();
+
+                return View(activities);
+
+            }             
             
-            var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
+            //var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
             return View(await lexicon_LMSContext.ToListAsync());
-        }  
-        public async Task<IActionResult> PartialView()
-        {
-            var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
-            return View(await lexicon_LMSContext.ToListAsync());
-            //var viewModel = await mapper.ProjectTo<TeacherViewModel>(_context.Module.Include(a => a.Activities).Include(a => a.Course))
-            //     .ToListAsync();
-
-            //return View(viewModel);
-            //var model = _context.Activity
-            // .Include(m => m.Module)
-            // .Select(m => new TeacherViewModel
-            // {
-            //     ModuleList = m.ModuleId,
-            //     ActivityList = m.Id,
-            // });
-
-            //return View(await model.ToListAsync());
-
         }
 
         // GET: Activities/Details/5
