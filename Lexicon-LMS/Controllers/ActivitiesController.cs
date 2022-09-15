@@ -44,15 +44,7 @@ namespace Lexicon_LMS.Controllers
                 .FirstOrDefaultAsync(c => c.Id == logedinUser.CourseId);
 
                 var activities = course.Modules.SelectMany(m => m.Activities).ToList();
-        {
-            //var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
-            //return View(await lexicon_LMSContext.ToListAsync());
-            var viewModel = await mapper.ProjectTo<ActivityListViewModel>(_context.Activity.Include(a => a.ActivityType).Include(a => a.Module))
-         .OrderByDescending(s => s.Id)
-         .ToListAsync();
-
-            return View(viewModel);
-        }  
+       
 
                 return View(activities);
 
