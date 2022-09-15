@@ -17,6 +17,7 @@ namespace Lexicon_LMS.Data
         {
             CreateMap<TeacherModuleViewModel, Module>();
             CreateMap<TeacherViewModel, Activity>();
+            CreateMap<CourseViewModel, Course>();
 
         }
 

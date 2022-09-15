@@ -38,33 +38,20 @@ namespace Lexicon_LMS.Controllers
                 .ToListAsync();
             if (logedinUser != null && logedinUser.CourseId!=null)
             {
-                var course = await _context.Course
+                var course = await mapper.ProjectTo<CourseViewModel>(_context.Course
                 .Include(c => c.Modules)
                 .ThenInclude(m => m.Activities)
-                .ThenInclude(a => a.ActivityType)
+                .ThenInclude(a => a.ActivityType))
                 .FirstOrDefaultAsync(c => c.Id == logedinUser.CourseId);
 
                 var activities = course.Modules.SelectMany(m => m.Activities).ToList();
 
                 return View(activities);
 
-            }             
-            
-            //var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
-            return View(await lexicon_LMSContext.ToListAsync());
-                var activities = course.Modules.SelectMany(m => m.Activities);               
-
-                return View(ToActiviteViewModel(activities));
-
-            }            
-            //var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
+            }         
             return View(viewModel);
         }
 
-        private string? ToActiviteViewModel(IEnumerable<Activity> activities)
-        {
-            throw new NotImplementedException();
-        }
 
         // GET: Activities/Details/5
         public async Task<IActionResult> Details(int? id)
