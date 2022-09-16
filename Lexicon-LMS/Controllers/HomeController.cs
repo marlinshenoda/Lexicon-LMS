@@ -19,6 +19,9 @@ namespace Lexicon_LMS.Controllers
         {
             _logger = logger;
         }
+
+        
+
         [Authorize]
         public IActionResult Index()
         {
@@ -35,6 +38,7 @@ namespace Lexicon_LMS.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
         public IActionResult FileUpload()
         {
             return View();
@@ -43,7 +47,7 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         public async Task<IActionResult> FileUpload(UpLoadDocumentViewModel viewModel)
         {
-            await UploadFile(viewModel.File);
+            await UploadFile(viewModel.UploadedFile);
             TempData["msg"] = "File uploaded successfully";
             return View();
         }
@@ -53,7 +57,7 @@ namespace Lexicon_LMS.Controllers
             string path = "";
             bool isCopy = false;
             try
-            { 
+            {
                 if (file.Length > 0)
                 {
                     string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
@@ -70,11 +74,12 @@ namespace Lexicon_LMS.Controllers
                 }
 
             }
-            catch(Exception)
-            {   
+            catch (Exception)
+            {
                 throw;
             }
             return isCopy;
         }
+
     }
 }
