@@ -1,7 +1,8 @@
-﻿ 
+﻿@model TeacherViewModel
 
 
- <div class="tabs">
+
+@* <div class="tabs">
 
     <input type="radio" name="tabs" id="tabone" checked="checked">
     <label for="tabone" asp-controller="Home" asp-action="Privacy">Modules</label>
@@ -9,17 +10,22 @@
       <h1>Modules</h1>
 
 
-    </div>
+    </div>*@
 
-    <input type="radio" name="tabs" id="tabtwo">
-    <label for="tabtwo"asp-area="">Activities</label>
-    <div class="tab">
+   
       <h1>Activities</h1>   
-      <partial name="Index"  />
-
+      <!--Modules and Activities-->
+@if (Model.ActivityList != null)
+{
+    <partial name="Index" model="@Model.ActivityList" />
+}
+else
+{
+   <h2 style="margin: 5px 25px 20px 0px">Activities<a asp-controller="Modules" asp-action="Create" asp-route-id="@Model.Current.Course.Id"> <img style="margin: 0px 0px 5px 5px" id="btn-create" src="/icons/create.svg" alt="Alternate Text" /></a></h2>
+}
     </div>
     
-    <input type="radio" name="tabs" id="tabthree">
+@*    <input type="radio" name="tabs" id="tabthree">
     <label for="tabthree">Documents</label>
     <div class="tab">
 
@@ -32,8 +38,7 @@
     <label for="tabfour">Students</label>
     <div class="tab">
 
-    </div>
-  </div>
+    </div>*@
 
   
   

@@ -9,46 +9,60 @@ using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Data;
 using AutoMapper;
 using Lexicon_LMS.Core.Entities.ViewModel;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lexicon_LMS.Controllers
 {
     public class ActivitiesController : Controller
     {
         private readonly Lexicon_LMSContext _context;
+        private readonly UserManager<User> _userManager;
+
         private readonly IMapper mapper;
 
-        public ActivitiesController(Lexicon_LMSContext context, IMapper mapper)
+        public ActivitiesController(UserManager<User> userManager, Lexicon_LMSContext context, IMapper mapper)
         {
             _context = context;
+            _userManager = userManager;
             this.mapper = mapper;
 
         }
-
+     
         // GET: Activities
         public async Task<IActionResult> Index()
-        {
-            var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
-            return View(await lexicon_LMSContext.ToListAsync());
-        }  
-        public async Task<IActionResult> PartialView()
-        {
-            var lexicon_LMSContext = _context.Activity.Include(a => a.ActivityType).Include(a => a.Module);
-            return View(await lexicon_LMSContext.ToListAsync());
-            //var viewModel = await mapper.ProjectTo<TeacherViewModel>(_context.Module.Include(a => a.Activities).Include(a => a.Course))
-            //     .ToListAsync();
+        {            
+            var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
+            var viewModel = await mapper.ProjectTo<ActivityListViewModel>(_context.Activity.Include(a => a.ActivityType).Include(a => a.Module))
+                .OrderBy(s => s.Id)
+                .ToListAsync();
+            if (logedinUser != null && logedinUser.CourseId!=null)
+            {
+                var course = await _context.Course
+                .Include(c => c.Modules)
+                .ThenInclude(m => m.Activities)
+                .ThenInclude(a => a.ActivityType)
+                .FirstOrDefaultAsync(c => c.Id == logedinUser.CourseId);
 
-            //return View(viewModel);
-            //var model = _context.Activity
-            // .Include(m => m.Module)
-            // .Select(m => new TeacherViewModel
-            // {
-            //     ModuleList = m.ModuleId,
-            //     ActivityList = m.Id,
-            // });
+                var activities = course.Modules.SelectMany(m => m.Activities).Select(x => new ActivityListViewModel
+                {
+                    Id = x.Id,
+                    ActivityType = x.ActivityType.ActivityTypeName,
+                    StartDate = x.StartDate,
+                    EndDate = x.EndDate,
+                    Name = x.ActivityName,
+                    ModelName = x.Module.ModulName
 
-            //return View(await model.ToListAsync());
+                }).ToList();
 
+                return View(activities);
+
+            }         
+            return View(viewModel);
         }
+
 
         // GET: Activities/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -76,6 +90,57 @@ namespace Lexicon_LMS.Controllers
             ViewData["ActivityTypeId"] = new SelectList(_context.Set<ActivityType>(), "Id", "ActivityTypeName");
             ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "Id", "Id");
             return View();
+        }
+        public async Task<IActionResult> GetTeacherActivityAjax(int? id)
+        {
+            if (id == null) return BadRequest();
+
+            if (ModelState.IsValid)
+            {
+                var module = await _context.Module.FirstOrDefaultAsync(m => m.Id == id);
+                var modules = await _context.Module
+                    .Where(m => m.Id == module.Id)
+                    .OrderBy(m => m.StartDate)
+                    .Select(m => new TeacherModuleViewModel
+                    {
+                        Id = m.Id,
+                        Name = m.ModulName,
+                        StartTime = m.StartDate,
+                        EndTime = m.EndDate,
+                        IsCurrentModule = false
+                    })
+                    .ToListAsync();
+
+
+                var teacherModel = new TeacherViewModel()
+                {
+                    ModuleList = modules,
+                    ActivityList = GetModuleActivityListAsync((int)id).Result,
+                 
+                };
+
+                return PartialView("TeacherModuleAndActivityPartial", teacherModel);
+            }
+
+            return BadRequest();
+        }
+        private async Task<List<ActivityListViewModel>> GetModuleActivityListAsync(int id)
+        {
+            var model = await _context.Activity
+                .Include(a => a.ActivityType)
+                .Where(a => a.Module.Id == id)
+                .OrderBy(a => a.StartDate)
+                .Select(a => new ActivityListViewModel
+                {
+                    Id = a.Id,
+                    Name = a.ActivityName,
+                    StartDate = a.StartDate,
+                    EndDate = a.EndDate,
+                    ActivityType = a.ActivityType.ActivityTypeName
+                })
+                .ToListAsync();
+
+            return model;
         }
 
         // POST: Activities/Create
@@ -193,6 +258,81 @@ namespace Lexicon_LMS.Controllers
         private bool ActivityExists(int id)
         {
           return (_context.Activity?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+
+        public async Task<List<TeacherModuleViewModel>> GetTeacherModuleListAsync(int? id)
+        {
+
+            var modules = await _context.Module.Include(a => a.Course)
+                .Where(a => a.Course.Id == id)
+                .Select(a => new TeacherModuleViewModel
+                {
+                    Id = a.Id,
+                    Name = a.ModulName,
+                    StartTime = a.StartDate,
+                    EndTime = a.EndDate,
+                    IsCurrentModule = false
+                })
+                .OrderBy(m => m.StartTime)
+                .ToListAsync();
+
+
+
+            return modules;
+        }
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Teacher(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var assignmentList = await AssignmentListTeacher(id);
+            var moduleList = await GetTeacherModuleListAsync(id);
+            var module = moduleList.Find(y => y.IsCurrentModule);
+            var activityList = new List<ActivityListViewModel>();
+
+            if (module != null)
+                activityList = await GetModuleActivityListAsync(module.Id);
+
+            var model = new TeacherViewModel
+            {
+                
+                AssignmentList = assignmentList,
+                ModuleList = moduleList,
+                ActivityList = activityList
+                
+            };
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+        public async Task<List<TeacherAssignmentListViewModel>> AssignmentListTeacher(int? id)
+        {
+            var students = _context.Course.Find(id).Users.Count();
+
+            if (students == 0) return null;
+
+            var assignments = await _context.Activity
+                .Where(a => a.ActivityType.ActivityTypeName == "Assignment" && a.Module.Id == id)
+                .Select(a => new TeacherAssignmentListViewModel
+                {
+                    Id = a.Id,
+                    Name = a.ActivityName,
+                    StartDate = a.StartDate,
+                    EndDate = a.EndDate,
+                    Finished = a.Documents.Where(d => d.IsFinished.Equals(true)).Count() * 100 / students
+                })
+                .OrderBy(v => v.StartDate)
+                .ToListAsync();
+
+            return assignments;
         }
     }
 }
