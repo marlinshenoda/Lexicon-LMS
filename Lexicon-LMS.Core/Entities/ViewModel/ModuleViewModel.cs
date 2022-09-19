@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Lexicon_LMS.Core.Entities.ViewModel
 {
-    public class TeacherModuleViewModel
+    public class ModuleViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
         [DisplayName("Start Time")]
-        public DateTime StartTime { get; set; }
+        public DateTime StartDate { get; set; }
 
         [DisplayName("End Time")]
-        public DateTime EndTime { get; set; }
+        public DateTime EndDate { get; set; }
         public bool IsCurrentModule { get; set; }
     }
 }

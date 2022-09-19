@@ -108,24 +108,28 @@ namespace Lexicon_LMS.Data
             var faker = new Faker("sv");
 
             var ActivityTypes = new List<ActivityType>();
+            string[] types = { "E-Learning", "Assignment", "Lecture", "Group Meeting" };
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < types.Length; i++)
             {
-                var title = faker.Hacker.Adjective()+" " +faker.Hacker.Verb() + "ing" ;
-                var temp = new ActivityType
-                {
-                    ActivityTypeName = title                    
-                    
-                };
+                //var title = faker.Hacker.Adjective()+" " +faker.Hacker.Verb() + "ing" ;
+                //var temp = new ActivityType
+                //{
+                //    ActivityTypeName = title                    
 
-                ActivityTypes.Add(temp);
+                //};
+
+                //ActivityTypes.Add(temp);
+                var t = types[i];
+                   var atype = new ActivityType { ActivityTypeName = t };
+                   ActivityTypes.Add(atype);
             }
 
 
             return ActivityTypes;
         }
 
-        private static async Task<IEnumerable<Course>> GetCoursesAsync(List<ActivityType> aT)
+    private static async Task<IEnumerable<Course>> GetCoursesAsync(List<ActivityType> aT)
         {
             var faker = new Faker("sv");
 
