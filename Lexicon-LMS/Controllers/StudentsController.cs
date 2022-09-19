@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Web.WebPages.Html;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -43,15 +45,26 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: StudentsController/Create
-        public ActionResult Create()
+        public async Task<ActionResult> CreateAsync()
         {
-            return View();
+            var courses = await _context.Course.ToListAsync();
+            var studentV = new StudentCreateViewModel
+            {
+                AvailableCourses = courses.Select(c => new SelectListItem
+                {
+                    Text = c.CourseName.ToString(),
+                    Value = c.Id.ToString(),
+                    Selected = false
+                }).ToList()
+            };     
+
+            return View(studentV);
         }
 
         // POST: StudentsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create([Bind("FirstName,LastName,Email,Password,CourseId")] User Student)
         {
             try
             {
