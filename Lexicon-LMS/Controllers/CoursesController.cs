@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -46,6 +47,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Courses/Create
+        [Authorize(Roles = "Teacher")]
         public IActionResult Create()
         {
             return View();
@@ -53,8 +55,9 @@ namespace Lexicon_LMS.Controllers
 
         // POST: Courses/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.        
         [HttpPost]
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CourseName,Description,StartDate,EndDate")] Course course)
         {
@@ -68,6 +71,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Courses/Edit/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Course == null)
@@ -86,7 +90,9 @@ namespace Lexicon_LMS.Controllers
         // POST: Courses/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[Authorize(Roles = "Teacher")]
         [HttpPost]
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CourseName,Description,StartDate,EndDate")] Course course)
         {
@@ -119,6 +125,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Courses/Delete/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Course == null)
@@ -137,6 +144,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // POST: Courses/Delete/5
+        [Authorize(Roles = "Teacher")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -145,7 +153,14 @@ namespace Lexicon_LMS.Controllers
             {
                 return Problem("Entity set 'Lexicon_LMSContext.Course'  is null.");
             }
-            var course = await _context.Course.FindAsync(id);
+
+            //var course = await _context.Course.FindAsync(id);
+
+            var course = await _context.Course
+                .Include(u=> u.Users)
+                .Include(u => u.Documents)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
             if (course != null)
             {
                 _context.Course.Remove(course);

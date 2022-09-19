@@ -32,7 +32,9 @@
                         }
                         else if (User.IsInRole("Student"))
                         {
-                            
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Courses" asp-action="Index">Courses</a>
+                            </li>
                         }
                     </ul>
 
@@ -42,7 +44,9 @@
         </nav>
     </header>
         <main role="main" class="pb-3">
-                <div @RenderBody()></div>
+                <div> 
+                    @RenderBody()
+                </div>
 
         </main>
 

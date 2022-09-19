@@ -1,6 +1,7 @@
 ﻿using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Core.Entities.ViewModel;
 using Lexicon_LMS.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,14 @@ namespace Lexicon_LMS.Controllers
         {
             _context = context;
             _userManager = userManager;
+        }
+
+        // GET: StudentsController
+        public async Task<ActionResult> WelcomePage()
+        {
+            var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
+
+            return View(logedinUser);
         }
 
         // GET: StudentsController
@@ -43,6 +52,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: StudentsController/Create
+        [Authorize(Roles = "Teacher")]
         public ActionResult Create()
         {
             return View();
@@ -50,6 +60,7 @@ namespace Lexicon_LMS.Controllers
 
         // POST: StudentsController/Create
         [HttpPost]
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
         {
@@ -64,6 +75,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: StudentsController/Edit/5
+        [Authorize(Roles = "Teacher")]
         public ActionResult Edit(int id)
         {
             return View();
@@ -71,6 +83,7 @@ namespace Lexicon_LMS.Controllers
 
         // POST: StudentsController/Edit/5
         [HttpPost]
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
         {

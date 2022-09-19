@@ -85,6 +85,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Activities/Create
+        [Authorize(Roles = "Teacher")]
         public IActionResult Create()
         {
             ViewData["ActivityTypeId"] = new SelectList(_context.Set<ActivityType>(), "Id", "ActivityTypeName");
@@ -147,6 +148,7 @@ namespace Lexicon_LMS.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ActivityName,Description,StartDate,EndDate,ModuleId,ActivityTypeId")] Activity activity)
         {
@@ -162,6 +164,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Activities/Edit/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Activity == null)
@@ -183,6 +186,7 @@ namespace Lexicon_LMS.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ActivityName,Description,StartDate,EndDate,ModuleId,ActivityTypeId")] Activity activity)
         {
@@ -217,6 +221,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Activities/Delete/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Activity == null)
@@ -237,6 +242,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // POST: Activities/Delete/5
+        [Authorize(Roles = "Teacher")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -281,6 +287,7 @@ namespace Lexicon_LMS.Controllers
 
             return modules;
         }
+        
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Teacher(int? id)
         {
