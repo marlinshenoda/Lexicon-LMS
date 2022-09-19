@@ -1,0 +1,70 @@
+﻿
+@model IEnumerable<TeacherAssignmentListViewModel>
+
+
+<div class="accordion accordion-flush" id="accordionFlushExample">
+      <div class="panel-group" id="accordionY">
+            @{int ij = 1;}
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-headingOne">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-@ij" aria-expanded="false" aria-controls="flush-collapseOne">
+ASSIGNMENTS      </button>
+    </h2>
+    <div id="flush-@ij" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+      <div class="accordion-body"> 
+<div id="ass-row-headers" class="row">
+    <div class="col-sm-3">
+        @Html.DisplayNameFor(model => model.Name)
+    </div>
+    <div class="col-sm-3">
+        @Html.DisplayNameFor(model => model.StartDate)
+    </div>
+    <div class="col-sm-3">
+        @Html.DisplayNameFor(model => model.EndDate)
+    </div>
+    <div class="col-sm-1">
+        @Html.DisplayNameFor(model => model.Finished)
+    </div>
+    <div class="col-sm-2">
+        @*Nada*@
+    </div>
+</div>
+
+
+@foreach (var item in Model)
+{
+    <div class="row">
+        <div class="col-sm-3">
+            <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">@item.Name</a>
+        </div>
+        <div class="col-sm-3">
+            @Html.DisplayFor(modelItem => item.StartDate)
+        </div>
+        <div class="col-sm-3">
+            @Html.DisplayFor(modelItem => item.EndDate)
+        </div>
+        <div class="col-sm-1">
+            @Html.DisplayFor(modelItem => item.Finished) %
+        </div>
+        <div class="col-sm-2 ass-col-icons">
+            @*<a asp-controller="Activities" asp-action="Edit" asp-route-id="@item.Id"><img src="~/icons/edit.svg" /></a>*@
+            @*<a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id"><img src="~/icons/info.svg"/></a>*@
+            @*<a asp-controller="Activities" asp-action="Delete" asp-route-id="@item.Id"><img src="~/icons/delete.svg" /></a>*@
+        </div>
+    </div>
+}
+
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+          </div> 
+
+  </div>
+  </div>

@@ -3,7 +3,26 @@
 @{
     ViewData["Title"] = "Index";
 }
+                     <!----------Navigationbar------->
+  <div class="row form-group rounded bg-light border" >
+    <div style="text-align:center;" class="col-xs-2 col-sm-2 col-lg-2">
+        <div class="d-grid gap-2 col-6 mx-auto">
+            <h2 class=" text-center mt-4">Modules</h2>
+              @foreach (var item in Model)
+        {
+  <button class="btn btn-info rounded-4" type="button">
+      <b runat="server">   @item.ModuleModulName  </b>
 
+  </button>
+        }
+</div>
+
+
+
+    </div>
+                <!----------endNavigationbar&StartContent------->
+
+    <div style="background-color:lightgrey; text-align:center;" class="col-xs-10 col-sm-10 col-lg-10">
 
 <p>
     <a class="btn btn-success" asp-action="Create">Add New Activity</a>
@@ -20,7 +39,7 @@
                 <h2 class="accordion-header" id="headingOne">
                     <button class="accordion-button accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@ij" aria-expanded="false" aria-controls="collapseOne">
 
-                        <b runat="server"> Module @item.Id:  @item.ModelName  </b>
+                        <b runat="server"> Module @item.Id:  @item.ModuleModulName  </b>
                     </button>
                 </h2>
             </div>
@@ -31,7 +50,7 @@
                         <thead>
                             <tr>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Name)
+                                    @Html.DisplayNameFor(model => model.ActivityName)
                                 </th>
 
                                 <th>
@@ -41,7 +60,7 @@
                                     @Html.DisplayNameFor(model => model.EndDate)
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.ActivityType)
+                                    @Html.DisplayNameFor(model => model.ActivityTypeActivityTypeName)
                                 </th>
 
                                 <th></th>
@@ -52,7 +71,7 @@
                             {
                                 <tr>
                                     <td>
-                                        @Html.DisplayFor(modelItem => input.Name)
+                                        @Html.DisplayFor(modelItem => input.ActivityName)
                                     </td>
 
                                     <td>
@@ -62,7 +81,7 @@
                                         @Html.DisplayFor(modelItem => input.EndDate)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => input.ActivityType)
+                                        @Html.DisplayFor(modelItem => input.ActivityTypeActivityTypeName)
                                     </td>
 
 
@@ -83,6 +102,5 @@
     </div>
 </div>
 
-
-
-
+</div>
+  </div>

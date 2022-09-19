@@ -1,6 +1,8 @@
-﻿using Lexicon_LMS.Core.Entities;
+﻿using AutoMapper;
+using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Core.Entities.ViewModel;
 using Lexicon_LMS.Data;
+using Lexicon_LMS.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,11 +15,14 @@ namespace Lexicon_LMS.Controllers
     {
         private readonly Lexicon_LMSContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly IMapper mapper;
 
-        public StudentsController(UserManager<User> userManager, Lexicon_LMSContext context)
+        public StudentsController(UserManager<User> userManager, Lexicon_LMSContext context, IMapper mapper)
         {
             _context = context;
             _userManager = userManager;
+            this.mapper = mapper;
+
         }
 
         // GET: StudentsController
@@ -133,5 +138,249 @@ namespace Lexicon_LMS.Controllers
 
             });
         }
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Teacher(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var Elearnig = await ElearningtListTeacher(id);
+
+            var assignmentList = await AssignmentListTeacher(id);
+            var moduleList = await GetTeacherModuleListAsync(id);
+            var module = moduleList.Find(y => y.IsCurrentModule);
+            var activityList = new List<ActivityListViewModel>();
+
+            if (module != null)
+                activityList = await GetModuleActivityListAsync(module.Id);
+
+            var model = new TeacherViewModel
+            {
+                Elearning=Elearnig, 
+                AssignmentList = assignmentList,
+                ModuleList = moduleList,
+                ActivityList = activityList
+            };
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+        public async Task<IActionResult> GetTeacherActivityAjax(int? id)
+        {
+            if (id == null) return BadRequest();
+
+            if (Request.IsAjax())
+            {
+                var module = await _context.Module.FirstOrDefaultAsync(m => m.Id == id);
+                var modules = await _context.Module
+                    .Where(m => m.CourseId == module.CourseId)
+                    .OrderBy(m => m.StartDate)
+                    .Select(m => new ModuleViewModel
+                    {
+                        Id = m.Id,
+                        Name = m.ModulName,
+                        StartDate = m.StartDate,
+                        EndDate = m.EndDate,
+                        IsCurrentModule = false
+                    })
+                    //.FirstOrDefaultAsync(m => m.Id == id);
+                   .ToListAsync();
+
+
+                var teacherModel = new TeacherViewModel()
+                {
+                    ModuleList = modules,
+                    ActivityList = GetModuleActivityListAsync((int)id).Result,
+                };
+
+                return PartialView("TeacherModuleAndActivityPartial", teacherModel);
+            }
+
+            return BadRequest();
+        }
+      
+
+     
+        public async Task<List<TeacherAssignmentListViewModel>> AssignmentListTeacher(int? id)
+        {
+            var students = _context.Course.Find(id);
+
+
+            var assignments = await _context.Activity
+                .Where(a => a.ActivityType.ActivityTypeName == "Assignment" && a.Module.CourseId == id)
+                .Select(a => new TeacherAssignmentListViewModel
+                {
+                    Id = a.Id,
+                    Name = a.ActivityName,
+                    StartDate = a.StartDate,
+                    EndDate = a.EndDate,
+                })
+                .ToListAsync();
+
+            return assignments;
+        }
+        public async Task<List<ActivityListViewModel>> ElearningtListTeacher(int? id)
+        {
+            var students = _context.Course.Find(id);
+
+
+            var elearnig = await _context.Activity
+                .Where(a => a.ActivityType.ActivityTypeName == "E-Learning" && a.Module.CourseId == id)
+                .Select(a => new ActivityListViewModel
+                {
+                    Id = a.Id,
+                    ActivityName = a.ActivityName,
+                    StartDate = a.StartDate,
+                    EndDate = a.EndDate,
+                })
+                .ToListAsync();
+
+            return elearnig;
+;
+        }
+        private async Task<List<ActivityListViewModel>> GetModuleActivityListAsync(int id)
+        {
+            var model = await _context.Activity
+                .Include(a => a.ActivityType)
+                .Where(a => a.Module.Id == id)
+                .OrderBy(a => a.StartDate)
+                .Select(a => new ActivityListViewModel
+                {
+                    Id = a.Id,
+                    ActivityName = a.ActivityName,
+                    StartDate = a.StartDate,
+                    EndDate = a.EndDate,
+                    ActivityTypeActivityTypeName = a.ActivityType.ActivityTypeName
+                })
+                .ToListAsync();
+
+            return model;
+        }
+        public async Task<List<ModuleViewModel>> GetTeacherModuleListAsync(int? id)
+        {
+            var timeNow = DateTime.Now;
+
+            var modules = await _context.Module.Include(a => a.Course)
+                .Where(a => a.Course.Id == id)
+                .Select(a => new ModuleViewModel
+                {
+                    Id = a.Id,
+                    Name = a.ModulName,
+                    StartDate = a.StartDate,
+                    EndDate = a.EndDate,
+                    IsCurrentModule = false
+                })
+                .OrderBy(m => m.StartDate)
+                .ToListAsync();
+
+         
+
+            return modules;
+        }
+    //    public async Task<IActionResult> TeacherHome(int? CourseId)
+     //   {
+            //var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
+            //var viewModel = await mapper.ProjectTo<CourseViewModel>(_context.Course.Include(a => a.Modules).Include(a => a.Documents))
+            //    .OrderBy(s => s.Id)
+            //    .ToListAsync();
+            //if (logedinUser != null && logedinUser.CourseId != null)
+            //{
+            //    var course = await _context.Course
+            //    .Include(c => c.Modules)
+            //    .ThenInclude(m => m.Activities)
+            //    .ThenInclude(a => a.ActivityType)
+            //    .FirstOrDefaultAsync(c => c.Id == logedinUser.CourseId);
+
+            //    var activities = course.Modules.SelectMany(m => m.Activities).Select(x => new ActivityListViewModel
+            //    {
+            //        Id = x.Id,
+            //        ActivityName = x.ActivityName,
+            //        StartDate = x.StartDate,
+            //        EndDate = x.EndDate,
+            //        ActivityTypeActivityTypeName = x.ActivityType.ActivityTypeName,
+            //        //ModuleId = x.Module.Id,
+
+            //        //ModulName = x.Module.ModulName
+
+            //    }).ToList();
+
+            //    return View(activities);
+
+            //}
+            //return View(viewModel);
+      //  }
+            public async Task<IActionResult> TeacherHome()
+            {
+            var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
+            var viewModel = await mapper.ProjectTo<CourseViewModel>(_context.Course.Include(a => a.Modules).Include(a => a.Documents))
+                .OrderBy(s => s.Id)
+              .ToListAsync();
+            if (logedinUser != null && logedinUser.CourseId != null)
+            {
+                var course = await _context.Course
+                .Include(c => c.Modules)
+                .ThenInclude(m => m.Activities)
+                .ThenInclude(a => a.ActivityType)
+                .FirstOrDefaultAsync(c => c.Id == logedinUser.CourseId);
+
+                var activities = course.Modules.SelectMany(m => m.Activities).Select(x => new ActivityListViewModel
+                {
+                    Id = x.Id,
+                    ActivityName = x.ActivityName,
+                    StartDate = x.StartDate,
+                    EndDate = x.EndDate,
+                    ActivityTypeActivityTypeName = x.ActivityType.ActivityTypeName,
+                    //ModuleId = x.Module.Id,
+
+                    //ModulName = x.Module.ModulName
+
+                }).ToList();
+
+                return View(activities);
+
+                //TempData["CourseId"] = id;
+
+            }      return View(viewModel);
+
+
+        }
+        //[Authorize(Roles = "Teacher")]
+        //public async Task<IActionResult> TeacherHome(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var Elearnig = await ElearningtListTeacher(id);
+
+        //    var assignmentList = await AssignmentListTeacher(id);
+        //    var moduleList = await GetTeacherModuleListAsync(id);
+        //    var module = moduleList.Find(y => y.IsCurrentModule);
+        //    var activityList = new List<ActivityListViewModel>();
+
+        //    if (module != null)
+        //        activityList = await GetModuleActivityListAsync(module.Id);
+
+        //    var model = new TeacherViewModel
+        //    {
+        //        Elearning = Elearnig,
+        //        AssignmentList = assignmentList,
+        //        ModuleList = moduleList,
+        //        ActivityList = activityList
+        //    };
+
+        //    if (model == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(model);
+        //}
     }
 }

@@ -1,0 +1,21 @@
+﻿@model TeacherViewModel
+
+   
+      <!-- Activities-->
+@if (Model.ActivityList != null)
+{
+    <partial name="TeacherModuleAndActivityPartial" model="@Model" />
+   
+
+       
+}
+else
+{
+   <h2 style="margin: 5px 25px 20px 0px">Activities<a asp-controller="Activities" asp-action="Create" > <img style="margin: 0px 0px 5px 5px" id="btn-create" src="/icons/create.svg" alt="Alternate Text" /></a></h2>
+}
+
+
+  
+ <partial name="AssignmentPartial" model="@Model.AssignmentList" />
+ <partial name="ElearningPartial" model="@Model.Elearning" />
+
