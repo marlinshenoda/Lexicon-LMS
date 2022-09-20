@@ -13,7 +13,7 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
         public int Id { get; set; }
 
         [DisplayName("Course Name")]
-        public string NameCourseName { get; set; } = string.Empty;
+        public string CourseName { get; set; } = string.Empty;
 
         [StringLength(200)]
         [DisplayName("Description")]
