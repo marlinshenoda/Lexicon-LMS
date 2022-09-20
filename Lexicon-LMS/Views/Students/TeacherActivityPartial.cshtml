@@ -36,17 +36,23 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ActivityTypeActivityTypeName)
             </td>
+@*            <td>
+                 if(!string.IsNullOrEmpty(Document.FileName))
+                    {
+                    <span>
+                        <br />
+                        <img src="~/upload/@Document.FilePath" />
+                    </span>
+                    }
+            </td>*@
             <td>
               <div class="col-sm-4 ">
-            <a class="btn btn-success" asp-controller="Documents" asp-action="UploadActivityDoc" asp-route-id="@item.Id">
+                        <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
                 <span>
-                    <i class="bi bi-upload" src="upload.svg"></i>
-
+                                <i class="bi bi-upload" src="~/wwwroot/upload.svg"></i>
                 </span>    
         </a>
-         
       </div>
-               
             </td>
         </tr>
 }

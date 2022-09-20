@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -22,8 +23,12 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
         public string ActivityTypeActivityTypeName{ get; set; }
         public int ModuleId { get; set; }
         public int ActivityTypeId { get; set; }
+        public Document Document { get; set; }
         public string ModuleModulName { get; set; }
         public int CourseId { get; set; }
 
+        public IFormFile? FileBuff { get; set; }
+
+        public ICollection<Document> Documents { get; set; } = new List<Document>();
     }
 }
