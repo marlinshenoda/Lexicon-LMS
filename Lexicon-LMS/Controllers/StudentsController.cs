@@ -1,4 +1,5 @@
-﻿using Lexicon_LMS.Core.Entities;
+﻿using AutoMapper;
+using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Core.Entities.ViewModel;
 using Lexicon_LMS.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -12,20 +13,34 @@ namespace Lexicon_LMS.Controllers
     public class StudentsController : Controller
     {
         private readonly Lexicon_LMSContext _context;
+        private readonly IMapper mapper;
         private readonly UserManager<User> _userManager;
 
-        public StudentsController(UserManager<User> userManager, Lexicon_LMSContext context)
+        public StudentsController(UserManager<User> userManager, Lexicon_LMSContext context, IMapper mapper)
         {
             _context = context;
+            this.mapper = mapper;
             _userManager = userManager;
         }
 
         // GET: StudentsController
         public async Task<ActionResult> WelcomePage()
         {
-            var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
+            var userId = _userManager.GetUserId(User);
 
-            return View(logedinUser);
+            //var user = await _context.Users.Select(u => new StudentCourseViewModel
+            //{
+            //    Id = u.Id,
+            //    CourseName = u.Course.CourseName,
+            //    CourseDescription = u.Course.Description,
+            //    Documents = u.Documents
+            //    //Add more....
+            //})
+            //.FirstOrDefaultAsync(u => u.Id == userId);// _context.Users.Find(_userManager.GetUserId(User));
+
+            var viewModel = mapper.ProjectTo<StudentCourseViewModel>(_context.Users).FirstOrDefault(u => u.Id == userId);
+          
+            return View(viewModel);
         }
 
         // GET: StudentsController

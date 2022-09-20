@@ -21,6 +21,7 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Courses
+        [Authorize]
         public async Task<IActionResult> Index()
         {
               return _context.Course != null ? 
