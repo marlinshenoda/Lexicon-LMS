@@ -31,12 +31,18 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="" asp-controller="Courses" asp-action="Index">Courses</a>
+                            </li> 
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Students" asp-action="Index">Students</a>
                             </li>
                         }
                         else if (User.IsInRole("Student"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Courses" asp-action="Index">Courses</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Students" asp-action="Teacher"></a>
+                            </li> 
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Students" asp-action="Teacher">Students</a>
                             </li>
                         }
                     </ul>

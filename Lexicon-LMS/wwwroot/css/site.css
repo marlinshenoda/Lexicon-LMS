@@ -139,8 +139,8 @@ body {
         box-shadow: none;
     }
 
-.btn-dark,
-.btn-success {
+.btn-dark
+ {
     border-radius: 30px;
     width: 100%;
 }
