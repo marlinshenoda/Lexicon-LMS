@@ -33,17 +33,5 @@ namespace Lexicon_LMS.Core.Entities
         public int CourseId { get; set; }
     }
 
-    public class ModuleViewModel
-    {
-        public int Id { get; set; }
-
-        [DisplayName("Modul Name")]
-        public string ModulName { get; set; } = string.Empty;
-
-        [StringLength(200)]
-        [DisplayName("Description")]
-        public string Description { get; set; } = string.Empty;
-
-       
-    }
+    
 }

@@ -16,12 +16,10 @@ namespace Lexicon_LMS.Controllers
         private readonly Lexicon_LMSContext _context;
         private readonly IMapper mapper;
         private readonly UserManager<User> _userManager;
-        private readonly IMapper mapper;
 
         public StudentsController(UserManager<User> userManager, Lexicon_LMSContext context, IMapper mapper)
         {
-            _context = context;
-            this.mapper = mapper;
+            _context = context;   
             _userManager = userManager;
             this.mapper = mapper;
 
