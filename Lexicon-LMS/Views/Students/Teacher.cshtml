@@ -1,9 +1,21 @@
 ﻿@model TeacherViewModel
 
-   
+
+
+
+
+
+
+
+
+     <div class="container cont-section" >
+      <partial name="WelcomeCourse" model="@Model.CouseDetails" />
+
+     </div>
       <!-- Activities-->
 @if (Model.ActivityList != null)
 {
+
     <partial name="TeacherModuleAndActivityPartial" model="@Model" />
    
 
@@ -16,6 +28,10 @@ else
 
 
   
- <partial name="AssignmentPartial" model="@Model.AssignmentList" />
- <partial name="ElearningPartial" model="@Model.Elearning" />
+ <div class="container cont-section" >
+      <partial name="AssignmentPartial" model="@Model.AssignmentList" />
 
+     </div>
+
+
+   

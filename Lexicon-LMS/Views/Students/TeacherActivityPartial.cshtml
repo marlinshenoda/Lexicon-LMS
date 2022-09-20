@@ -1,38 +1,22 @@
 ﻿@model IEnumerable<ActivityListViewModel>
 
 
-    <h2>Activities</h2>
-<hr class="bg-danger border-2 border-top border-danger">
+    <h2 >Activities</h2>
 
-
-<!--Activitydropdownlist-->  
-
-@*<div class="accordion" id="accordionExample">
-         <div class="panel-group" id="accordionY">
-            @{int ij = 1;}
-           <div class="accordion-item">
-    <h2 class="accordion-header" id="headingOne">
-      <button class="accordion-button accordion-collapse collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@ij"  aria-expanded="true" aria-controls="collapseOne">
-
-    <b  runat="server"> Activities </b>
-      </button>
-    </h2>
-    </div>
-
-    <div id="collapse_@ij" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-      <div class="accordion-body">
-       <table class="table">
-    <thead>
+<table class="table  table-striped">
+    <thead class="table-dark">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.ActivityName)
             </th>
-
             <th>
                 @Html.DisplayNameFor(model => model.StartDate)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActivityTypeActivityTypeName)
             </th>
             <th></th>
         </tr>
@@ -49,72 +33,29 @@
             <td>
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActivityTypeActivityTypeName)
+            </td>
+            <td>
+              <div class="col-sm-4 ">
+            <a class="btn btn-success" asp-controller="Documents" asp-action="UploadActivityDoc" asp-route-id="@item.Id">
+                <span>
+                    <i class="bi bi-upload" src="upload.svg"></i>
 
-           
+
+                </span>    
+        </a>
+         
+      </div>
+               
+            </td>
         </tr>
 }
     </tbody>
 </table>
-          
-</div>
-      </div> 
-    </div>    
- 
-        </div>     
-
-
-     
-*@
 
 
 
-
-<div id="activity-header-row" class="row">
-    <div class="col-sm-2">
-        @Html.DisplayNameFor(model => model.ActivityName)
-    </div>
-    <div class="col-sm-3">
-        @Html.DisplayNameFor(model => model.StartDate)
-    </div>
-    <div class="col-sm-3">
-        @Html.DisplayNameFor(model => model.EndDate)
-    </div>
-    <div class="col-sm-3">
-        @Html.DisplayNameFor(model => model.ActivityTypeActivityTypeName)
-    </div>
-    <div class="col-sm-1">
-    </div>
-</div>
-
-@foreach (var item in Model)
-{
-    <!--Edit/Details etc-->
-    <div class="row">
-        <div class="col-sm-2">
-            <a asp-controller="Activities" asp-action="Details" asp-route-id="@item.Id">@item.ActivityName</a>
-        </div>
-        <div class="col-sm-3">
-            @Html.DisplayFor(modelItem => item.StartDate)
-        </div>
-        <div class="col-sm-3">
-            @Html.DisplayFor(modelItem => item.EndDate)
-        </div>
-        <div class="col-sm-3">
-            @Html.DisplayFor(modelItem => item.ActivityTypeActivityTypeName)
-        </div>
-        <div class="col-sm-1 col-icons">
-            <a asp-controller="Documents" asp-action="UploadActivityDoc" asp-route-id="@item.Id">
-                <img class="icon-img" src="~/icons/share.svg" />   
-            </a>
-            @*<a asp-controller="Activities" asp-action="Edit" asp-route-id="@item.Id">
-                <img src="~/icons/edit.svg"  />
-            </a>
-            <a asp-controller="Activities" asp-action="Delete" asp-route-id="@item.Id">
-                <img src="~/icons/delete.svg"  />
-            </a>*@
-        </div>
-    </div>
-}
 
 
 
