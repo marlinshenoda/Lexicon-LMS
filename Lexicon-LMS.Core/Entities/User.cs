@@ -12,10 +12,12 @@ namespace Lexicon_LMS.Core.Entities
 
         //Fk
         public int? CourseId { get; set; }
+
         
         //Nav Prop
         public ICollection<Document> Documents { get; set; } = new List<Document>();
-        
+        public Course Course { get; set; } = null!;
+
 
     }
 }   

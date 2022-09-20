@@ -22,6 +22,11 @@ namespace Lexicon_LMS.Data
             CreateMap<CourseViewModel, Course>();
             CreateMap<Course, CourseViewModel>();
 
+            CreateMap<User, StudentViewModel>();
+            CreateMap<User, StudentCourseViewModel>();
+            CreateMap<Module, ModuleViewModel>();
+            CreateMap<Document, DocumentViewModel>();
+
         }
 
     }

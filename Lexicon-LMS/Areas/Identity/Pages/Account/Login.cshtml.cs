@@ -104,7 +104,8 @@ namespace Lexicon_LMS.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("/Identity/Account/Manage");
+            //returnUrl ??= Url.Content("/Identity/Account/Manage");
+            //returnUrl ??= Url.Content("/Students/WelcomePage");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
@@ -116,7 +117,8 @@ namespace Lexicon_LMS.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    //return LocalRedirect(returnUrl); 
+                    return  LocalRedirect("/Students/WelcomePage");
                 }
                 if (result.RequiresTwoFactor)
                 {
