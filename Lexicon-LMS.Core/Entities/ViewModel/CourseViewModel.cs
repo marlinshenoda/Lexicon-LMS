@@ -17,7 +17,7 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
 
         [StringLength(200)]
         [DisplayName("Description")]
-        public string Description { get; set; } = string.Empty;
+        public string CourseDescription { get; set; } = string.Empty;
 
         [DataType(DataType.Date)]
         [DisplayName("Start Date")]

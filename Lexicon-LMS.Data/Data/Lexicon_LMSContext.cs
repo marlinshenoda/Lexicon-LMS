@@ -25,5 +25,24 @@ namespace Lexicon_LMS.Data
         public DbSet<Document>? Document { get; set; }
 
         public DbSet<Module>? Module { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            //Cascade delete Course -< Modules
+            builder.Entity<Module>()
+                .HasOne(p => p.Course)
+                .WithMany(b => b.Modules)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //Cascade delete Module -< Ativities
+            builder.Entity<Activity>()
+                .HasOne(p => p.Module)
+                .WithMany(b => b.Activities)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+
+
     }
 }

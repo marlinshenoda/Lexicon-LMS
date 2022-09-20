@@ -38,6 +38,8 @@
 
   <ItemGroup>
     <Folder Include="Services\" />
+    <Folder Include="Areas\Identity\Data\" />
+    <Folder Include="Upload\" />
   </ItemGroup>
 
 </Project>

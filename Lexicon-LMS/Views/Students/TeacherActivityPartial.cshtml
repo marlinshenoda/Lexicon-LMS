@@ -1,0 +1,81 @@
+﻿@model IEnumerable<ActivityListViewModel>
+
+
+    <h2 >Activities</h2>
+
+<table class="table  table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ActivityName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActivityTypeActivityTypeName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActivityName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActivityTypeActivityTypeName)
+            </td>
+@*            <td>
+                 if(!string.IsNullOrEmpty(Document.FileName))
+                    {
+                    <span>
+                        <br />
+                        <img src="~/upload/@Document.FilePath" />
+                    </span>
+                    }
+            </td>*@
+            <td>
+              <div class="col-sm-4 ">
+                        <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
+                <span>
+                                <i class="bi bi-upload" src="~/wwwroot/upload.svg"></i>
+                </span>    
+        </a>
+      </div>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

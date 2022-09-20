@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LexiconLMS.Extensions
+namespace Lexicon_LMS.Extensions
 {
     public static class StudentExtension
     {
