@@ -30,23 +30,16 @@
                 <label asp-for="Email"></label>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="form-floating">
+            @*<div class="form-floating">
                 <input asp-for="Password" class="form-control" autocomplete="new-password" aria-required="true" />
                 <label asp-for="Password"></label>
                 <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-           @* <div class="form-floating">
-                <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
-                <label asp-for="ConfirmPassword"></label>
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>  *@      
+            </div>   *@         
             <div class="form-group">
-                @Html.LabelFor(x => Model.AvailableCourses, htmlAttributes: new { @class = "control-label" })
-                @Html.DropDownListFor(x => Model.AvailableCourses, new SelectList(@Model.AvailableCourses, "Value", "Text"), htmlAttributes: new { @class = "form-control", @id = "CourseId" })
-                @Html.ValidationMessageFor(x => x.AvailableCourses, "", new { @class = "text-danger" })
-
-            </div>
-           
+                <select class="form-control" asp-for="CourseId" asp-items="@Model.AvailableCourses">
+                    <option selected="selected" value="">Please asing Course</option>
+                </select>
+            </div>           
             <div class="form-group">
                 <input type="submit" value="Register Student" class="btn btn-primary"/>
             </div>
