@@ -39,47 +39,5 @@ namespace Lexicon_LMS.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult FileUpload()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> FileUpload(UpLoadDocumentViewModel viewModel)
-        {
-            await UploadFile(viewModel.UploadedFile);
-            TempData["msg"] = "File uploaded successfully";
-            return View();
-        }
-
-        public async Task<bool> UploadFile(IFormFile file)
-        {
-            string path = "";
-            bool isCopy = false;
-            try
-            {
-                if (file.Length > 0)
-                {
-                    string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
-                    path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Upload"));
-                    using (var filestream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
-                    {
-                        await file.CopyToAsync(filestream);
-                    }
-                    isCopy = true;
-                }
-                else
-                {
-                    isCopy = false;
-                }
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return isCopy;
-        }
-
     }
 }

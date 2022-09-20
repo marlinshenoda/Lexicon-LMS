@@ -176,6 +176,7 @@ namespace Lexicon_LMS.Controllers
                 AssignmentList = assignmentList,
                 ModuleList = moduleList,
                 ActivityList = activityList
+
             };
 
             if (model == null)
@@ -202,6 +203,7 @@ namespace Lexicon_LMS.Controllers
                         StartDate = m.StartDate,
                         EndDate = m.EndDate,
                         IsCurrentModule = false
+
                     })
                     //.FirstOrDefaultAsync(m => m.Id == id);
                    .ToListAsync();
@@ -244,6 +246,7 @@ namespace Lexicon_LMS.Controllers
         {
             var model = await _context.Activity
                 .Include(a => a.ActivityType)
+                .Include(a => a.Documents)
                 .Where(a => a.Module.Id == id)
                 .OrderBy(a => a.StartDate)
                 .Select(a => new ActivityListViewModel
@@ -252,7 +255,8 @@ namespace Lexicon_LMS.Controllers
                     ActivityName = a.ActivityName,
                     StartDate = a.StartDate,
                     EndDate = a.EndDate,
-                    ActivityTypeActivityTypeName = a.ActivityType.ActivityTypeName
+                    ActivityTypeActivityTypeName = a.ActivityType.ActivityTypeName,
+                    Documents = a.Documents
                 })
                 .ToListAsync();
 
@@ -378,5 +382,46 @@ namespace Lexicon_LMS.Controllers
 
         //    return View(model);
         //}
+        public IActionResult FileUpload()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FileUpload(ActivityListViewModel viewModel)
+        {
+            await UploadFile(viewModel.UploadedFile);
+            TempData["msg"] = "File uploaded successfully";
+            return View();
+        }
+
+        public async Task<bool> UploadFile(IFormFile file)
+        {
+            string path = "";
+            bool isCopy = false;
+            try
+            {
+                if (file.Length > 0)
+                {
+                    string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+                    path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Upload"));
+                    using (var filestream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+                    {
+                        await file.CopyToAsync(filestream);
+                    }
+                    isCopy = true;
+                }
+                else
+                {
+                    isCopy = false;
+                }
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return isCopy;
+        }
     }
 }

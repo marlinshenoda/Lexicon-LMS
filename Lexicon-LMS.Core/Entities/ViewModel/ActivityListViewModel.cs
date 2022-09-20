@@ -27,7 +27,8 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
         public string ModuleModulName { get; set; }
         public int CourseId { get; set; }
 
-        public IFormFile? FileBuff { get; set; }
+        public IFormFile UploadedFile { get; set; }
+        public string Name { get; set; }
 
         public ICollection<Document> Documents { get; set; } = new List<Document>();
     }
