@@ -49,7 +49,23 @@ namespace Lexicon_LMS.Controllers
 
             return View(await viewModel.ToListAsync());
         }
+        public async Task<ActionResult> WelcomeCourse(int id)
+        {
+            var viewModel = await _context.Course.FirstOrDefaultAsync(c => c.Id == id);
+            //(a => new Course
+            //    {
+            //        CourseName = a.CourseName,  
+            //        Description = a.Description,    
+            //    })
+            var Details = viewModel.CourseName.ToList();
+           
 
+            return View(Details);
+
+
+
+            return View(viewModel);
+        }
         // GET: StudentsController/Details/5
         public ActionResult Details(int id)
         {
@@ -146,7 +162,6 @@ namespace Lexicon_LMS.Controllers
                 return NotFound();
             }
 
-            var Elearnig = await ElearningtListTeacher(id);
 
             var assignmentList = await AssignmentListTeacher(id);
             var moduleList = await GetTeacherModuleListAsync(id);
@@ -158,7 +173,6 @@ namespace Lexicon_LMS.Controllers
 
             var model = new TeacherViewModel
             {
-                Elearning=Elearnig, 
                 AssignmentList = assignmentList,
                 ModuleList = moduleList,
                 ActivityList = activityList
@@ -225,25 +239,7 @@ namespace Lexicon_LMS.Controllers
 
             return assignments;
         }
-        public async Task<List<ActivityListViewModel>> ElearningtListTeacher(int? id)
-        {
-            var students = _context.Course.Find(id);
-
-
-            var elearnig = await _context.Activity
-                .Where(a => a.ActivityType.ActivityTypeName == "E-Learning" && a.Module.CourseId == id)
-                .Select(a => new ActivityListViewModel
-                {
-                    Id = a.Id,
-                    ActivityName = a.ActivityName,
-                    StartDate = a.StartDate,
-                    EndDate = a.EndDate,
-                })
-                .ToListAsync();
-
-            return elearnig;
-;
-        }
+ 
         private async Task<List<ActivityListViewModel>> GetModuleActivityListAsync(int id)
         {
             var model = await _context.Activity

@@ -23,6 +23,7 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
         public int ModuleId { get; set; }
         public int ActivityTypeId { get; set; }
         public string ModuleModulName { get; set; }
+        public int CourseId { get; set; }
 
     }
 }
