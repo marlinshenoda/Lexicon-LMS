@@ -11,7 +11,7 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
     public class ActivityListViewModel
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string ActivityName { get; set; }
         [DisplayName("Start Time")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
         public DateTime StartDate { get; set; }
@@ -19,9 +19,10 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
         public DateTime EndDate { get; set; }
         [DisplayName("Activity Type")]
-        public string ActivityType { get; set; }
-
-        public string? ModelName { get; set; }
+        public string ActivityTypeActivityTypeName{ get; set; }
+        public int ModuleId { get; set; }
+        public int ActivityTypeId { get; set; }
+        public string ModuleModulName { get; set; }
 
     }
 }

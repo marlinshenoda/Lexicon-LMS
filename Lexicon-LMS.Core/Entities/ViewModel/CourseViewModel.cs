@@ -30,6 +30,7 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
         public IEnumerable<User> Users { get; set; } = new List<User>();
         public IEnumerable<Module> Modules { get; set; } = new List<Module>();
         public IEnumerable<Document> Documents { get; set; } = new List<Document>();
+        public IEnumerable<ActivityListViewModel> ActivityList { get; set; } = new List<ActivityListViewModel>();
 
     }
 }

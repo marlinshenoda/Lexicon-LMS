@@ -1,0 +1,14 @@
+﻿@model TeacherViewModel
+
+<div class="container cont-section" id="cont-modules-and-activities">
+    <!--Modules and Activities-->
+    <div class="row" >
+        <div  class="col-sm-3 text-center">
+            <h2 style="margin: 5px 25px 20px 0px">Modules<a asp-controller="Modules" asp-action="Create" ><img style="margin: 0px 0px 5px 5px" id="btn-create" src="/icons/create.svg" alt="Alternate Text" /></a></h2>
+            <partial name="TeacherModuleList" model="@Model.ModuleList" />
+        </div>
+        <div  class="col-sm-9">
+            <partial name="TeacherActivityPartial" model="@Model.ActivityList" />
+        </div>
+    </div>
+</div>

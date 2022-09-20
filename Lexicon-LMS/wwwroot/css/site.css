@@ -23,6 +23,11 @@ body {
 
 }
 
+#WelcomePage {
+    background: url("https://img.freepik.com/premium-photo/portrait-young-business-teacher-woman-red-shirt-skirt-glasses-holding-wooden-classroom-pointer-copy-space-isolated-white-background-education-teaching-high-school-university-concept_365776-14994.jpg?w=2000");
+    background-size: cover;
+}
+
 .navbardown {
     height: 50px;
     background-color: #ff0000;
