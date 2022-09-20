@@ -1,10 +1,20 @@
 ﻿@model TeacherViewModel
 
 
-     <div class="container cont-section" >
-      <partial name="WelcomeCourse" model="@Model.CouseDetails" />
+@{
+    ViewData["Title"] = "Teacher";
+}
 
-     </div>
+
+
+
+
+@*
+     <div class="container cont-section" >
+      <partial name="WelcomeCourse" model="@Model" />
+
+
+     </div>*@
       <!-- Activities-->
 @if (Model.ActivityList != null)
 {
