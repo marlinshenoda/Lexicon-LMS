@@ -32,4 +32,6 @@ namespace Lexicon_LMS.Core.Entities
         //Fk
         public int CourseId { get; set; }
     }
+
+    
 }
