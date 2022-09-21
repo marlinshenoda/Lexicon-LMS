@@ -33,6 +33,7 @@ namespace Lexicon_LMS.Data
                 var roleNames = new[] { "Student", "Teacher" };
 
                 await AddRolesAsync(roleNames);
+                await db.SaveChangesAsync();
             }
             var teachers = userManager.GetUsersInRoleAsync("Teacher").Result.ToList();
             if (teachers.Count() < 1)
@@ -60,8 +61,9 @@ namespace Lexicon_LMS.Data
                 string[] courselist = { "Cours 1", "Cours 2", "Cours 3", "Cours 4", "Cours 5" };
                 string[] documentlist = { "Training 1", "Training 2", "Training 3", "Training 4", "Trial" };
                 string[] modulelist = { "Java", "C#", "C++", "SQL", "MVC" };
+                string[] activitylist = { "Activity 1", "Activity 2", "Activity 3", "Activity 4", "Activity 5" };
                 var AT = db.ActivityType.ToList();
-                var Courses = await GetCoursesAsync(AT, courselist, modulelist, documentlist);
+                var Courses = await GetCoursesAsync(AT, courselist, modulelist, documentlist, activitylist);
                 await db.AddRangeAsync(Courses);
             }
 
@@ -122,7 +124,7 @@ namespace Lexicon_LMS.Data
             return ActivityTypes;
         }
 
-    private static async Task<IEnumerable<Course>> GetCoursesAsync(List<ActivityType> aT, string[] courselist, string[] modulelist, string[] documentlist)
+    private static async Task<IEnumerable<Course>> GetCoursesAsync(List<ActivityType> aT, string[] courselist, string[] modulelist, string[] documentlist, string[] activitylist)
         {
             var faker = new Faker("sv");
 
@@ -136,8 +138,8 @@ namespace Lexicon_LMS.Data
                     StartDate = DateTime.Now.AddDays(faker.Random.Int(-5, 5)),
                     EndDate = DateTime.Now.AddDays(faker.Random.Int(10, 15)),
                     Description = "Denna kursen har lektioner och studier innom " + courselist[i],
-                    Modules = GetModules(modulelist[i], aT),
-                    Documents = GetDocuments(documentlist[i]),
+                    Modules = GetModules(modulelist, activitylist, aT),
+                    Documents = GetDocuments(documentlist),
                     Users = GetStudnetUsers(),
                 };
 
@@ -153,20 +155,20 @@ namespace Lexicon_LMS.Data
             return Courses;
         }
 
-        private static ICollection<Module> GetModules(string coursetitle, List<ActivityType> aT)
+        private static ICollection<Module> GetModules(string[] courselist, string[] activitylist, List<ActivityType> aT)
         {
             var faker = new Faker("sv");
             var Modules = new List<Module>();
             int num = faker.Random.Int(3, 5);
 
-            for (int i = 0; i < num; i++)
+            for (int i = 0; i < courselist.Length; i++)
             {
                 var title = faker.Hacker.Verb();
                 var temp = new Module
                 {
-                    ModulName = coursetitle + "-" + title,
-                    Description = "Dena module har info innom " + title,
-                    Activities = GetActivities(title, aT),
+                    ModulName = courselist[i],
+                    Description = "Dena module har info innom " + courselist[i],
+                    Activities = GetActivities(activitylist,aT),
                     StartDate = DateTime.Now.AddDays(faker.Random.Int(10, 15)),
                 };
 
@@ -176,18 +178,18 @@ namespace Lexicon_LMS.Data
             return Modules;
         }
 
-        private static ICollection<Document> GetDocuments(string documenttitle)
+        private static ICollection<Document> GetDocuments(string[] documentlist)
         {
             var faker = new Faker("sv");
             var Documents = new List<Document>();
             int num = faker.Random.Int(2, 7);
 
-            for (int i = 0; i < documenttitle.Length; i++)
+            for (int i = 0; i < documentlist.Length; i++)
             {
                 var temp = new Document
                 {
-                    DocumentName = documenttitle[i].ToString(),
-                    Description = "Detta documentet har info innom " + documenttitle[i].ToString(),
+                    DocumentName = documentlist[i],
+                    Description = "Detta documentet har info innom " + documentlist[i],
                     //FilePath =""
                     IsFinished = false
                 };
@@ -221,6 +223,7 @@ namespace Lexicon_LMS.Data
                         LastName = LName,
                         UserName = FName + "." + LName + "@email.com",
                         Email = FName + "." + LName + "@email.com",
+                        PhoneNumber = faker.Phone.PhoneNumber(),
                         EmailConfirmed = true
                     };
 
@@ -232,7 +235,7 @@ namespace Lexicon_LMS.Data
             return Users;
         }
 
-        private static ICollection<Activity> GetActivities(string mdouletitle, List<ActivityType> aT)
+        private static ICollection<Activity> GetActivities(string[] Activitylist, List<ActivityType> aT)
         {
             var rnd = new Random();
             
@@ -243,13 +246,13 @@ namespace Lexicon_LMS.Data
             var Activities = new List<Activity>();
             int num = rnd.Next(1, 6);
 
-            for (int i = 0; i < num; i++)
+            for (int i = 0; i < Activitylist.Length; i++)
             {
                 int rn = rnd.Next(0, activityTypes.Count());
                 var title = faker.Hacker.Verb();
                 var temp = new Activity
                 {
-                    ActivityName = mdouletitle + "-" + title,
+                    ActivityName = Activitylist[i],
                     Description = "Dena aktivitet har information för " + title,
                     StartDate = DateTime.Now.AddDays(faker.Random.Int(10, 15)),
                     ActivityType = activityTypes[rn],
