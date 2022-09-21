@@ -33,7 +33,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-               <a asp-action="Teacher" asp-controller="Students" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CourseName)</a> 
+               <a asp-action="MainPage" asp-controller="Students" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CourseName)</a> 
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)

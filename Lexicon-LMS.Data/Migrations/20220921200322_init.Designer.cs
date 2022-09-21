@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lexicon_LMS.Data.Migrations
 {
     [DbContext(typeof(Lexicon_LMSContext))]
-    [Migration("20220921125225_Init")]
-    partial class Init
+    [Migration("20220921200322_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

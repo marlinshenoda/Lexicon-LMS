@@ -1,4 +1,4 @@
-﻿@model CreateModuleViewModule
+﻿@model Module
 
 @{
     ViewData["Title"] = "Create";
@@ -13,24 +13,24 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ModuleName" class="control-label"></label>
-                <input asp-for="ModuleName" class="form-control" />
-                <span asp-validation-for="ModuleName" class="text-danger"></span>
+                <label asp-for="ModulName" class="control-label"></label>
+                <input asp-for="ModulName" class="form-control" />
+                <span asp-validation-for="ModulName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ModuleDescription" class="control-label"></label>
-                <input asp-for="ModuleDescription" class="form-control" />
-                <span asp-validation-for="ModuleDescription" class="text-danger"></span>
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ModuleStartDate" class="control-label"></label>
-                <input asp-for="ModuleStartDate" class="form-control" />
-                <span asp-validation-for="ModuleStartDate" class="text-danger"></span>
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ModuleEndDate" class="control-label"></label>
-                <input asp-for="ModuleEndDate" class="form-control" />
-                <span asp-validation-for="ModuleEndDate" class="text-danger"></span>
+                <label asp-for="EndDate" class="control-label"></label>
+                <input asp-for="EndDate" class="form-control" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

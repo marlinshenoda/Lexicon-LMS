@@ -9,17 +9,19 @@
 
 
 
-@*
+
      <div class="container cont-section" >
-      <partial name="WelcomeCourse" model="@Model" />
+      <partial name="WelcomeCourse" model="@Model.Current" />
 
 
-     </div>*@
+     </div>
+                 <div id="placeHolderHere"></div>
+
       <!-- Activities-->
 @if (Model.ActivityList != null)
 {
 
-    <partial name="TeacherModuleAndActivityPartial" model="@Model" />
+    <partial name="ModuleAndActivityPartial" model="@Model" />
    
 
        

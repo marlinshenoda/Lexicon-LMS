@@ -118,7 +118,7 @@ namespace Lexicon_LMS.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User logged in.");
                     //return LocalRedirect(returnUrl); 
-                    return  LocalRedirect("/Students/WelcomePage");
+                   // return  LocalRedirect("/Students/WelcomePage");
                 }
                 if (result.RequiresTwoFactor)
                 {

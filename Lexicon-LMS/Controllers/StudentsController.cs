@@ -194,20 +194,86 @@ namespace Lexicon_LMS.Controllers
 
             });
         }
-        [Authorize(Roles = "Teacher")]
-        public async Task<IActionResult> Teacher(int? id)
+
+        public async Task<CurrentViewModel> CurrentCourse(int? id)
+        {
+            var course = _context.Course.Include(a => a.Users)
+                 .Include(a => a.Modules)
+                .ThenInclude(a => a.Activities)
+                .FirstOrDefault(a => a.Id == id);
+          
+          //  var students = course.Users.Count();
+
+            var assignments = await _context.Activity.Where(c => c.ActivityType.ActivityTypeName == "Assignment" && c.Module.CourseId == id)
+              .OrderBy(a => a.StartDate)
+              .Select(a => new AssignmentsViewModel
+              {
+                  Id = a.Id,
+                  Name = a.ActivityName,
+                  DueTime = a.EndDate,
+                //  Finished = a.Documents.Where(d => d.IsFinished.Equals(true)).Count() * 100 / students
+              })
+              .ToListAsync();
+            var timeNow = DateTime.Now;
+            var module = course.Modules.OrderBy(t => Math.Abs((t.StartDate - timeNow).Ticks)).First();
+            var model = new CurrentViewModel
+            {
+                course = course,
+              Assignments = assignments,
+               Module = module,
+
+            };
+
+            return model;
+        }
+        private List<ModuleViewModel> SetCurrentModule(List<ModuleViewModel> modules, int currentModuleId)
+        {
+            foreach (var module in modules)
+            {
+                if (module.Id == currentModuleId)
+                {
+                    module.IsCurrentModule = true;
+                }
+                else
+                {
+                    module.IsCurrentModule = false;
+                }
+            }
+
+            return modules;
+        }
+        [AllowAnonymous]
+
+        public async Task<IActionResult> MainPage(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
+            var current = await CurrentCourse(id);
+            var currentCourse = current.course;
 
+
+            if (current.course.Modules.Count == 0)
+
+                return View(new TeacherViewModel
+                {
+                    Current = new CurrentViewModel
+                    {
+                        course = current.course,
+
+                        Assignments = null,
+                    },
+                    AssignmentList = null,
+                    ModuleList = null,
+                    ActivityList = null
+                });
 
             var assignmentList = await AssignmentListTeacher(id);
             var moduleList = await GetTeacherModuleListAsync(id);
             var module = moduleList.Find(y => y.IsCurrentModule);
             var activityList = new List<ActivityListViewModel>();
-
+            
           
 
             if (module != null)
@@ -215,9 +281,10 @@ namespace Lexicon_LMS.Controllers
 
             var model = new TeacherViewModel
             {
-                AssignmentList = assignmentList,
+                Current= current,
                 ModuleList = moduleList,
-                ActivityList = activityList
+                ActivityList = activityList,
+                AssignmentList = assignmentList
 
             };
 
@@ -235,6 +302,8 @@ namespace Lexicon_LMS.Controllers
             if (Request.IsAjax())
             {
                 var module = await _context.Module.FirstOrDefaultAsync(m => m.Id == id);
+                var current = await CurrentCourse(module.CourseId);
+
                 var modules = await _context.Module
                     .Where(m => m.CourseId == module.CourseId)
                     .OrderBy(m => m.StartDate)
@@ -243,7 +312,7 @@ namespace Lexicon_LMS.Controllers
                         Id = m.Id,
                         Name = m.ModulName,
                         StartDate = m.StartDate,
-                        EndDate = m.EndDate,
+                        //EndDate = m.EndDate,
                         IsCurrentModule = false
 
                     })
@@ -255,9 +324,11 @@ namespace Lexicon_LMS.Controllers
                 {
                     ModuleList = modules,
                     ActivityList = GetModuleActivityListAsync((int)id).Result,
+                    Current = current
+
                 };
 
-                return PartialView("TeacherModuleAndActivityPartial", teacherModel);
+                return PartialView("ModuleAndActivityPartial", teacherModel);
             }
 
             return BadRequest();
@@ -265,19 +336,19 @@ namespace Lexicon_LMS.Controllers
       
 
      
-        public async Task<List<TeacherAssignmentListViewModel>> AssignmentListTeacher(int? id)
+        public async Task<List<AssignmentListViewModel>> AssignmentListTeacher(int? id)
         {
             var students = _context.Course.Find(id);
 
 
             var assignments = await _context.Activity
                 .Where(a => a.ActivityType.ActivityTypeName == "Assignment" && a.Module.CourseId == id)
-                .Select(a => new TeacherAssignmentListViewModel
+                .Select(a => new AssignmentListViewModel
                 {
                     Id = a.Id,
                     Name = a.ActivityName,
                     StartDate = a.StartDate,
-                    EndDate = a.EndDate,
+                 //   EndDate = a.EndDate,
                 })
                 .ToListAsync();
 
@@ -296,7 +367,7 @@ namespace Lexicon_LMS.Controllers
                     Id = a.Id,
                     ActivityName = a.ActivityName,
                     StartDate = a.StartDate,
-                    EndDate = a.EndDate,
+                   // EndDate = a.EndDate,
                     ActivityTypeActivityTypeName = a.ActivityType.ActivityTypeName,
                     Documents = a.Documents
                 })
@@ -315,13 +386,15 @@ namespace Lexicon_LMS.Controllers
                     Id = a.Id,
                     Name = a.ModulName,
                     StartDate = a.StartDate,
-                    EndDate = a.EndDate,
+                    //EndDate = a.EndDate,
                     IsCurrentModule = false
                 })
                 .OrderBy(m => m.StartDate)
                 .ToListAsync();
+            var currentModuleId = modules.OrderBy(t => Math.Abs((t.StartDate - timeNow).Ticks)).First().Id;
 
-         
+            SetCurrentModule(modules, currentModuleId);
+
 
             return modules;
         }
@@ -351,7 +424,7 @@ namespace Lexicon_LMS.Controllers
                     Id = x.Id,
                     ActivityName = x.ActivityName,
                     StartDate = x.StartDate,
-                    EndDate = x.EndDate,
+                    //EndDate = x.EndDate,
                     ActivityTypeActivityTypeName = x.ActivityType.ActivityTypeName,
                     //ModuleId = x.Module.Id,
 
@@ -409,7 +482,7 @@ namespace Lexicon_LMS.Controllers
         {
             await UploadFile(viewModel.UploadedFile);
             var DocumentFile = viewModel.UploadedFile;
-            //var DocumentPath = Path.GetFileName("Upload");
+            var DocumentPath = Path.GetFileName("Upload");
             TempData["msg"] = "File uploaded successfully";
             return View();
         }
