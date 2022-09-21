@@ -18,6 +18,8 @@
             <th>
                 @Html.DisplayNameFor(model => model.ActivityTypeActivityTypeName)
             </th>
+            <th>Documents</th>
+
             <th></th>
         </tr>
     </thead>
@@ -36,15 +38,25 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ActivityTypeActivityTypeName)
             </td>
-@*            <td>
-                 if(!string.IsNullOrEmpty(Document.FileName))
+            <td>
+                    <form enctype="multipart/form-data" asp-action="FileUpload">
+                        <div class="form-group">
+                            <input asp-for="@item.UploadedFile" type="file" />
+                        </div>
+                        <div class="form-group">
+                            <input class="btn btn-primary" type="submit" value="Upload" />
+                        </div>
+                    </form>
+            </td>
+
+
+            <td>
+                    @foreach (var document in item.Documents)
                     {
-                    <span>
-                        <br />
-                        <img src="~/upload/@Document.FilePath" />
-                    </span>
+                        @document.DocumentName
+                        < document="@document"></>
                     }
-            </td>*@
+            </td>
             <td>
               <div class="col-sm-4 ">
                         <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
