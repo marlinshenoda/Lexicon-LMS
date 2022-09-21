@@ -1,13 +1,24 @@
-﻿@model Course
-
-<div class="col-2">
+﻿@model CurrentViewModel
+<div class="row mt-3">
+<div class="col-4">
             <img src="~/business_information_technology_uk_5.webp" style="width:400px ; height:200px" alt="workshop" />
         </div>
+
+
+
         <div class="col-8">
-            <h3>
-                @Html.DisplayFor(model => model.CourseName)
-            </h3>
+            <h2>
+              Welcome in @Model.course.CourseName
+            </h2>
+
+             <hr />
             <p>
-                @Html.DisplayFor(model => model.Description)
+                 @Model.course.Description
+                 <h6>Duration</h6>
+                 @Model.course.StartDate<span>:</span>
+                 @Model.course.EndDate
+                 
+              
             </p>
         </div>
+</div>
