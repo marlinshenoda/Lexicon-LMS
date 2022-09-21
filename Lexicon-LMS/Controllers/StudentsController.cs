@@ -4,10 +4,12 @@ using Lexicon_LMS.Core.Entities.ViewModel;
 using Lexicon_LMS.Data;
 using Lexicon_LMS.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -15,11 +17,13 @@ namespace Lexicon_LMS.Controllers
     {
         private readonly Lexicon_LMSContext _context;
         private readonly IMapper mapper;
+        private readonly IWebHostEnvironment webHostEnvironment;
         private readonly UserManager<User> _userManager;
 
-        public StudentsController(UserManager<User> userManager, Lexicon_LMSContext context, IMapper mapper)
+        public StudentsController(IWebHostEnvironment webHostEnvironment, UserManager<User> userManager, Lexicon_LMSContext context, IMapper mapper)
         {
-            _context = context;   
+            _context = context;
+            this.webHostEnvironment = webHostEnvironment;
             _userManager = userManager;
             this.mapper = mapper;
 
@@ -403,12 +407,22 @@ namespace Lexicon_LMS.Controllers
         public async Task<IActionResult> FileUpload(ActivityListViewModel viewModel)
         {
             await UploadFile(viewModel.UploadedFile);
+            var DocumentFile = viewModel.UploadedFile;
+            //var DocumentPath = Path.GetFileName("Upload");
             TempData["msg"] = "File uploaded successfully";
             return View();
         }
 
         public async Task<bool> UploadFile(IFormFile file)
         {
+            //var pToFile = $"upload/{Path.Combine(file.CourseName, "upload")}/{file.ModuleName}/{file.ActivityName}";
+            //var test = Path.Combine(webHostEnvironment.WebRootPath, pToFile);
+            //if (!Directory.Exists(test))
+            //{
+            //    Directory.CreateDirectory(test);
+
+            //}
+
             string path = "";
             bool isCopy = false;
             try
