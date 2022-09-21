@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -90,25 +92,44 @@ namespace Lexicon_LMS.Controllers
 
         // GET: StudentsController/Create
         [Authorize(Roles = "Teacher")]
-        public ActionResult Create()
+        public async Task<ActionResult> CreateAsync()
         {
-            return View();
+            var courses = await _context.Course.ToListAsync();
+            var studentV = new StudentCreateViewModel
+            {
+                AvailableCourses = courses.Select(c => new SelectListItem
+                {
+                    Text = c.CourseName.ToString(),
+                    Value = c.Id.ToString(),
+                    Selected = false
+                }).ToList()
+            };     
+
+            return View(studentV);
         }
 
         // POST: StudentsController/Create
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> CreateAsync([Bind("FirstName,LastName,Email,CourseId")] User Student)
         {
-            try
+            if (ModelState.IsValid)
             {
+                Student.UserName = Student.Email;
+                var result = await _userManager.CreateAsync(Student, "StudentPW123!");
+
+                if (result.Succeeded)
+                {
+                    var result2 = await _userManager.AddToRoleAsync(Student, "Student");
+                    if (!result2.Succeeded) throw new Exception(string.Join("\n", result.Errors));
+                }
+
+
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(nameof(Index));
+
         }
 
         // GET: StudentsController/Edit/5
