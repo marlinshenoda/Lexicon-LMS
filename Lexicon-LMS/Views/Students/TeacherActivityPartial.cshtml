@@ -39,9 +39,9 @@
                 @Html.DisplayFor(modelItem => item.ActivityTypeActivityTypeName)
             </td>
             <td>
-                    <form enctype="multipart/form-data" asp-action="FileUpload">
+                    <form enctype="multipart/form-data" asp-action="FileUpload" method="post">
                         <div class="form-group">
-                            <input asp-for="@item.UploadedFile" type="file" />
+                            <input asp-for="@Model.First().UploadedFile" type="file" />
                         </div>
                         <div class="form-group">
                             <input class="btn btn-primary" type="submit" value="Upload" />
