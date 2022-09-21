@@ -8,16 +8,20 @@ using Microsoft.EntityFrameworkCore;
 using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Data;
 using Microsoft.AspNetCore.Authorization;
+using Lexicon_LMS.Core.Entities.ViewModel;
+using AutoMapper;
 
 namespace Lexicon_LMS.Controllers
 {
     public class ModulesController : Controller
     {
         private readonly Lexicon_LMSContext _context;
+        private readonly IMapper mapper;
 
-        public ModulesController(Lexicon_LMSContext context)
+        public ModulesController(Lexicon_LMSContext context,IMapper mapper)
         {
             _context = context;
+            this.mapper = mapper;
         }
 
         // GET: Modules
@@ -50,6 +54,7 @@ namespace Lexicon_LMS.Controllers
         [Authorize(Roles = "Teacher")]
         public IActionResult Create()
         {
+
             return View();
         }
 
@@ -59,11 +64,22 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ModulName,Description,StartDate,EndDate, CourseId")] Module module)
+        public async Task<IActionResult> Create(int id, CreateModuleViewModule module)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(module);
+            
+                var mofdel = mapper.Map<Module>(module);
+
+                var model = new CreateModuleViewModule
+                {
+                    CourseId = (int)id,
+                    ModuleStartDate = module.ModuleStartDate,
+                    ModuleEndDate = module.ModuleEndDate,
+                    ModuleDescription = module.ModuleDescription,   
+               
+                };
+                _context.Add(mofdel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

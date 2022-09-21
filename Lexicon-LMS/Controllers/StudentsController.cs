@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -52,6 +53,8 @@ namespace Lexicon_LMS.Controllers
         // GET: StudentsController
         public async Task<ActionResult> Index()
         {
+
+
             var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
 
             var viewModel = GetStudents();
@@ -62,26 +65,28 @@ namespace Lexicon_LMS.Controllers
 
                 return View(CourseSuers.ToList());
             }
-
+        
             return View(await viewModel.ToListAsync());
         }
-        public async Task<ActionResult> WelcomeCourse(int id)
-        {
-            var viewModel = await _context.Course.FirstOrDefaultAsync(c => c.Id == id);
-            //(a => new Course
-            //    {
-            //        CourseName = a.CourseName,  
-            //        Description = a.Description,    
-            //    })
-            var Details = viewModel.CourseName.ToList();
-           
+ 
+        //public async Task<IActionResult> Welcome(int? id)
+        //{
+        //    var viewModel = await _context.Course
+        //        .Select(a => new Course
+        //        {
+        //            CourseName = a.CourseName,
+        //            Description = a.Description,
+        //        })
+        //        .FirstOrDefaultAsync(c => c.Id == id);
 
-            return View(Details);
+        //    var Details = viewModel.CourseName;
 
 
+        //    return View(Details);
 
-            return View(viewModel);
-        }
+
+       // }
+
         // GET: StudentsController/Details/5
         public ActionResult Details(int id)
         {
@@ -90,25 +95,44 @@ namespace Lexicon_LMS.Controllers
 
         // GET: StudentsController/Create
         [Authorize(Roles = "Teacher")]
-        public ActionResult Create()
+        public async Task<ActionResult> CreateAsync()
         {
-            return View();
+            var courses = await _context.Course.ToListAsync();
+            var studentV = new StudentCreateViewModel
+            {
+                AvailableCourses = courses.Select(c => new SelectListItem
+                {
+                    Text = c.CourseName.ToString(),
+                    Value = c.Id.ToString(),
+                    Selected = false
+                }).ToList()
+            };     
+
+            return View(studentV);
         }
 
         // POST: StudentsController/Create
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> CreateAsync([Bind("FirstName,LastName,Email,CourseId")] User Student)
         {
-            try
+            if (ModelState.IsValid)
             {
+                Student.UserName = Student.Email;
+                var result = await _userManager.CreateAsync(Student, "StudentPW123!");
+
+                if (result.Succeeded)
+                {
+                    var result2 = await _userManager.AddToRoleAsync(Student, "Student");
+                    if (!result2.Succeeded) throw new Exception(string.Join("\n", result.Errors));
+                }
+
+
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(nameof(Index));
+
         }
 
         // GET: StudentsController/Edit/5
@@ -184,6 +208,8 @@ namespace Lexicon_LMS.Controllers
             var module = moduleList.Find(y => y.IsCurrentModule);
             var activityList = new List<ActivityListViewModel>();
 
+          
+
             if (module != null)
                 activityList = await GetModuleActivityListAsync(module.Id);
 
@@ -257,7 +283,7 @@ namespace Lexicon_LMS.Controllers
 
             return assignments;
         }
- 
+   
         private async Task<List<ActivityListViewModel>> GetModuleActivityListAsync(int id)
         {
             var model = await _context.Activity
@@ -299,34 +325,9 @@ namespace Lexicon_LMS.Controllers
 
             return modules;
         }
-    //    public async Task<IActionResult> TeacherHome(int? CourseId)
-     //   {
-            //var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
-            //var viewModel = await mapper.ProjectTo<CourseViewModel>(_context.Course.Include(a => a.Modules).Include(a => a.Documents))
-            //    .OrderBy(s => s.Id)
-            //    .ToListAsync();
-            //if (logedinUser != null && logedinUser.CourseId != null)
-            //{
-            //    var course = await _context.Course
-            //    .Include(c => c.Modules)
-            //    .ThenInclude(m => m.Activities)
-            //    .ThenInclude(a => a.ActivityType)
-            //    .FirstOrDefaultAsync(c => c.Id == logedinUser.CourseId);
 
-            //    var activities = course.Modules.SelectMany(m => m.Activities).Select(x => new ActivityListViewModel
-            //    {
-            //        Id = x.Id,
-            //        ActivityName = x.ActivityName,
-            //        StartDate = x.StartDate,
-            //        EndDate = x.EndDate,
-            //        ActivityTypeActivityTypeName = x.ActivityType.ActivityTypeName,
-            //        //ModuleId = x.Module.Id,
 
-            //        //ModulName = x.Module.ModulName
 
-            //    }).ToList();
-
-            //    return View(activities);
 
             //}
             //return View(viewModel);
