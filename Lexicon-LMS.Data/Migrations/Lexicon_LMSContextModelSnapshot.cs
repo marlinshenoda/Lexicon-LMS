@@ -454,9 +454,11 @@ namespace Lexicon_LMS.Data.Migrations
 
             modelBuilder.Entity("Lexicon_LMS.Core.Entities.User", b =>
                 {
-                    b.HasOne("Lexicon_LMS.Core.Entities.Course", null)
+                    b.HasOne("Lexicon_LMS.Core.Entities.Course", "Course")
                         .WithMany("Users")
                         .HasForeignKey("CourseId");
+
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

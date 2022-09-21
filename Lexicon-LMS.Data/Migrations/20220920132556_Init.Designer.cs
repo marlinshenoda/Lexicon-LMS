@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lexicon_LMS.Data.Migrations
 {
     [DbContext(typeof(Lexicon_LMSContext))]
-    [Migration("20220920082901_init")]
-    partial class init
+    [Migration("20220920132556_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -456,9 +456,11 @@ namespace Lexicon_LMS.Data.Migrations
 
             modelBuilder.Entity("Lexicon_LMS.Core.Entities.User", b =>
                 {
-                    b.HasOne("Lexicon_LMS.Core.Entities.Course", null)
+                    b.HasOne("Lexicon_LMS.Core.Entities.Course", "Course")
                         .WithMany("Users")
                         .HasForeignKey("CourseId");
+
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
