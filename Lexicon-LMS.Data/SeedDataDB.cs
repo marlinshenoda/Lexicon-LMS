@@ -48,7 +48,8 @@ namespace Lexicon_LMS.Data
 
             if(db.ActivityType.Count() < 1)
             {
-                var ActivityTypes = GetActivityType();
+                string[] activitytypeslist = { "E-Learning", "Assignment", "Lecture", "Group Meeting" };
+                var ActivityTypes = GetActivityType(activitytypeslist);
                 await db.AddRangeAsync(ActivityTypes);
                 await db.SaveChangesAsync();
             }
@@ -56,8 +57,11 @@ namespace Lexicon_LMS.Data
 
             if (db.Course.Count() < 1)
             {
+                string[] courselist = { "Cours 1", "Cours 2", "Cours 3", "Cours 4", "Cours 5" };
+                string[] documentlist = { "Training 1", "Training 2", "Training 3", "Training 4", "Trial" };
+                string[] modulelist = { "Java", "C#", "C++", "SQL", "MVC" };
                 var AT = db.ActivityType.ToList();
-                var Courses = await GetCoursesAsync(AT);
+                var Courses = await GetCoursesAsync(AT, courselist, modulelist, documentlist);
                 await db.AddRangeAsync(Courses);
             }
 
@@ -103,23 +107,12 @@ namespace Lexicon_LMS.Data
             if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
         }
 
-        private static ICollection<ActivityType> GetActivityType()
+        private static ICollection<ActivityType> GetActivityType(string[] types)
         {
-            var faker = new Faker("sv");
-
             var ActivityTypes = new List<ActivityType>();
-            string[] types = { "E-Learning", "Assignment", "Lecture", "Group Meeting" };
 
             for (int i = 0; i < types.Length; i++)
             {
-                //var title = faker.Hacker.Adjective()+" " +faker.Hacker.Verb() + "ing" ;
-                //var temp = new ActivityType
-                //{
-                //    ActivityTypeName = title                    
-
-                //};
-
-                //ActivityTypes.Add(temp);
                 var t = types[i];
                    var atype = new ActivityType { ActivityTypeName = t };
                    ActivityTypes.Add(atype);
@@ -129,23 +122,22 @@ namespace Lexicon_LMS.Data
             return ActivityTypes;
         }
 
-    private static async Task<IEnumerable<Course>> GetCoursesAsync(List<ActivityType> aT)
+    private static async Task<IEnumerable<Course>> GetCoursesAsync(List<ActivityType> aT, string[] courselist, string[] modulelist, string[] documentlist)
         {
             var faker = new Faker("sv");
 
             var Courses = new List<Course>();
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < courselist.Length; i++)
             {
-                var title = faker.Hacker.Verb();
                 var temp = new Course
                 {
-                    CourseName = title,
+                    CourseName = courselist[i],
                     StartDate = DateTime.Now.AddDays(faker.Random.Int(-5, 5)),
                     EndDate = DateTime.Now.AddDays(faker.Random.Int(10, 15)),
-                    Description = "Denna kursen har lektioner och studier innom " + title,
-                    Modules = GetModules(title, aT),
-                    Documents = GetDocuments(title),
+                    Description = "Denna kursen har lektioner och studier innom " + courselist[i],
+                    Modules = GetModules(modulelist[i], aT),
+                    Documents = GetDocuments(documentlist[i]),
                     Users = GetStudnetUsers(),
                 };
 
@@ -184,19 +176,18 @@ namespace Lexicon_LMS.Data
             return Modules;
         }
 
-        private static ICollection<Document> GetDocuments(string coursetitle)
+        private static ICollection<Document> GetDocuments(string documenttitle)
         {
             var faker = new Faker("sv");
             var Documents = new List<Document>();
             int num = faker.Random.Int(2, 7);
 
-            for (int i = 0; i < num; i++)
+            for (int i = 0; i < documenttitle.Length; i++)
             {
-                var title = faker.Hacker.Verb();
                 var temp = new Document
                 {
-                    DocumentName = coursetitle +"-"+ title,
-                    Description = "Detta documentet har info innom " + title,
+                    DocumentName = documenttitle[i].ToString(),
+                    Description = "Detta documentet har info innom " + documenttitle[i].ToString(),
                     //FilePath =""
                     IsFinished = false
                 };
