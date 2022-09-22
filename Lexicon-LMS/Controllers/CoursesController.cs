@@ -194,9 +194,10 @@ namespace Lexicon_LMS.Controllers
 
             //            Assignments = null,
             //        },
-            //        AssignmentList = new List<TeacherAssignmentListViewModel>(),
-            //        ModuleList = new List<ModuleViewModel>(),
-            //        ActivityList = new List<ActivityListViewModel>()
+            // Orsaskade Error för kurser som hadde inga moduler, assignments och activities
+            //        AssignmentList = null,
+            //        ModuleList = null,
+            //        ActivityList = null
             //});
 
             var assignmentList = await AssignmentListTeacher(id);
