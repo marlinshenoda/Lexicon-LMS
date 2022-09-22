@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Bogus.DataSets;
 using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Core.Entities.ViewModel;
 using Lexicon_LMS.Data;
@@ -10,6 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Reflection.Metadata;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Lexicon_LMS.Controllers
@@ -410,8 +413,21 @@ namespace Lexicon_LMS.Controllers
             await UploadFile(viewModel.UploadedFile);
             var DocumentFile = viewModel.UploadedFile;
             //var DocumentPath = Path.GetFileName("Upload");
+
+            //skapa ny document-etity och spara (glöm ej använda ciewModel.Id för att koppla till aktivity
+            var document = new Core.Entities.Document()
+            {
+                DocumentName = DocumentFile.Name,
+                FilePath = $"/Upload",
+                CourseId = viewModel.CourseId
+            };
+
+
+            var documentPath = $"/Upload";
+            document.FilePath = documentPath;
+            var path = Path.Combine(webHostEnvironment.WebRootPath, documentPath);
             TempData["msg"] = "File uploaded successfully";
-            return View();
+            return View("Index");
         }
 
         public async Task<bool> UploadFile(IFormFile file)
