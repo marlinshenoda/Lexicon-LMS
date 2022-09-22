@@ -53,8 +53,6 @@ namespace Lexicon_LMS.Controllers
         // GET: StudentsController
         public async Task<ActionResult> Index()
         {
-
-
             var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
 
             var viewModel = GetStudents();
@@ -115,8 +113,9 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateAsync([Bind("FirstName,LastName,Email,CourseId")] User Student)
+        public async Task<ActionResult> CreateAsync([Bind("FirstName,LastName,Email,PhoneNumber,CourseId")] User Student)
         {
+            ModelState.Remove("Course");
             if (ModelState.IsValid)
             {
                 Student.UserName = Student.Email;
@@ -127,8 +126,6 @@ namespace Lexicon_LMS.Controllers
                     var result2 = await _userManager.AddToRoleAsync(Student, "Student");
                     if (!result2.Succeeded) throw new Exception(string.Join("\n", result.Errors));
                 }
-
-
                 return RedirectToAction(nameof(Index));
             }
             return View(nameof(Index));
@@ -185,6 +182,7 @@ namespace Lexicon_LMS.Controllers
             {
                 Id = x.Id,
                 CourseId = x.CourseId,
+                CourseName = x.Course.CourseName,
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 Email = x.Email,
@@ -192,7 +190,7 @@ namespace Lexicon_LMS.Controllers
                 UserName = x.UserName,
                 ImagePicture = x.ImagePicture
 
-            });
+            }).Where(s => s.CourseId!=null);
         }
         //public async Task<IActionResult> WelcomeCourse(int? id)
         //{
