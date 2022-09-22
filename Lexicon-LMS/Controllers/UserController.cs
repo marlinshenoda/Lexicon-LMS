@@ -17,14 +17,14 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Lexicon_LMS.Controllers
 {
-    public class StudentsController : Controller
+    public class UserController : Controller
     {
         private readonly Lexicon_LMSContext _context;
         private readonly IMapper mapper;
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly UserManager<User> _userManager;
 
-        public StudentsController(IWebHostEnvironment webHostEnvironment, UserManager<User> userManager, Lexicon_LMSContext context, IMapper mapper)
+        public UserController(IWebHostEnvironment webHostEnvironment, UserManager<User> userManager, Lexicon_LMSContext context, IMapper mapper)
         {
             _context = context;
             this.webHostEnvironment = webHostEnvironment;
@@ -208,182 +208,11 @@ namespace Lexicon_LMS.Controllers
         //    })
         //    .FirstOrDefaultAsync(u => u.Id == userId);// _context.Users.Find(_userManager.GetUserId(User));
         //}
-        public async Task<CurrentViewModel> CurrentCourse(int? id)
-        {
-            var course = _context.Course.Include(a => a.Users)
-                 .Include(a => a.Modules)
-                .ThenInclude(a => a.Activities)
-                .FirstOrDefault(a => a.Id == id);
-          
-            var students = course.Users.Count();
-
-            var assignments = await _context.Activity.Where(c => c.ActivityType.ActivityTypeName == "Assignment" && c.Module.CourseId == id)
-              .OrderBy(a => a.StartDate)
-              .Select(a => new TeacherAssignmentsViewModel
-              {
-                  Id = a.Id,
-                  Name = a.ActivityName,
-                  DueTime = a.EndDate,
-                  Finished = a.Documents.Where(d => d.IsFinished.Equals(true)).Count() * 100 / students
-              })
-              .ToListAsync();
-             var model = new CurrentViewModel
-            {
-                course = course,
-              Assignments = assignments
-            };
-
-            return model;
-        }
-            [Authorize(Roles = "Teacher")]
-        public async Task<IActionResult> Teacher(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var current = await CurrentCourse(id);
-            var currentCourse = current.course;
-
-
-            if (current.course.Modules.Count == 0)
-
-                return View(new TeacherViewModel
-                {
-                    Current = new CurrentViewModel
-                    {
-                        course = current.course,
-
-                        Assignments = null,
-                    },
-                    AssignmentList = null,
-                    ModuleList = null,
-                    ActivityList = null
-                });
-
-            var assignmentList = await AssignmentListTeacher(id);
-            var moduleList = await GetTeacherModuleListAsync(id);
-            var module = moduleList.Find(y => y.IsCurrentModule);
-            var activityList = new List<ActivityListViewModel>();
-            
-          
-
-            if (module != null)
-                activityList = await GetModuleActivityListAsync(module.Id);
-
-            var model = new TeacherViewModel
-            {
-                Current= current,
-                ModuleList = moduleList,
-                ActivityList = activityList,
-                AssignmentList = assignmentList
-
-            };
-
-            if (model == null)
-            {
-                return NotFound();
-            }
-
-            return View(model);
-        }
-        public async Task<IActionResult> GetTeacherActivityAjax(int? id)
-        {
-            if (id == null) return BadRequest();
-
-            if (Request.IsAjax())
-            {
-                var module = await _context.Module.FirstOrDefaultAsync(m => m.Id == id);
-                var modules = await _context.Module
-                    .Where(m => m.CourseId == module.CourseId)
-                    .OrderBy(m => m.StartDate)
-                    .Select(m => new ModuleViewModel
-                    {
-                        Id = m.Id,
-                        Name = m.ModulName,
-                        StartDate = m.StartDate,
-                        EndDate = m.EndDate,
-                        IsCurrentModule = false
-
-                    })
-                    //.FirstOrDefaultAsync(m => m.Id == id);
-                   .ToListAsync();
-
-
-                var teacherModel = new TeacherViewModel()
-                {
-                    ModuleList = modules,
-                    ActivityList = GetModuleActivityListAsync((int)id).Result,
-                };
-
-                return PartialView("TeacherModuleAndActivityPartial", teacherModel);
-            }
-
-            return BadRequest();
-        }
+       
       
 
      
-        public async Task<List<TeacherAssignmentListViewModel>> AssignmentListTeacher(int? id)
-        {
-            var students = _context.Course.Find(id);
-
-
-            var assignments = await _context.Activity
-                .Where(a => a.ActivityType.ActivityTypeName == "Assignment" && a.Module.CourseId == id)
-                .Select(a => new TeacherAssignmentListViewModel
-                {
-                    Id = a.Id,
-                    Name = a.ActivityName,
-                    StartDate = a.StartDate,
-                    EndDate = a.EndDate,
-                })
-                .ToListAsync();
-
-            return assignments;
-        }
    
-        private async Task<List<ActivityListViewModel>> GetModuleActivityListAsync(int id)
-        {
-            var model = await _context.Activity
-                .Include(a => a.ActivityType)
-                .Include(a => a.Documents)
-                .Where(a => a.Module.Id == id)
-                .OrderBy(a => a.StartDate)
-                .Select(a => new ActivityListViewModel
-                {
-                    Id = a.Id,
-                    ActivityName = a.ActivityName,
-                    StartDate = a.StartDate,
-                    EndDate = a.EndDate,
-                    ActivityTypeActivityTypeName = a.ActivityType.ActivityTypeName,
-                    Documents = a.Documents
-                })
-                .ToListAsync();
-
-            return model;
-        }
-        public async Task<List<ModuleViewModel>> GetTeacherModuleListAsync(int? id)
-        {
-            var timeNow = DateTime.Now;
-
-            var modules = await _context.Module.Include(a => a.Course)
-                .Where(a => a.Course.Id == id)
-                .Select(a => new ModuleViewModel
-                {
-                    Id = a.Id,
-                    Name = a.ModulName,
-                    StartDate = a.StartDate,
-                    EndDate = a.EndDate,
-                    IsCurrentModule = false
-                })
-                .OrderBy(m => m.StartDate)
-                .ToListAsync();
-
-         
-
-            return modules;
-        }
 
 
 
