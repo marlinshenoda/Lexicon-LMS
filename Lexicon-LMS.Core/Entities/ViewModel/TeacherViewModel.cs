@@ -13,8 +13,8 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
 
         public IEnumerable<ModuleViewModel> ModuleList { get; set; }
         public IEnumerable<ActivityListViewModel> ActivityList { get; set; }
-        public string NameCourseName { get; set; }
-        public string NameDescription { get; set; }
+
+        public CurrentViewModel Current { get; set; }
 
     }
 }

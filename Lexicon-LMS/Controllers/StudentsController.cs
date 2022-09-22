@@ -197,20 +197,77 @@ namespace Lexicon_LMS.Controllers
 
             });
         }
-        [Authorize(Roles = "Teacher")]
+        //public async Task<IActionResult> WelcomeCourse(int? id)
+        //{
+
+        //    var user = await _context.Course.Select(u => new StudentCourseViewModel
+        //    {
+        //        Id = u.Id,
+        //        CourseName = u.Course.CourseName,
+        //        CourseDescription = u.Course.Description,
+        //        Documents = u.Documents
+        //        //Add more....
+        //    })
+        //    .FirstOrDefaultAsync(u => u.Id == userId);// _context.Users.Find(_userManager.GetUserId(User));
+        //}
+        public async Task<CurrentViewModel> CurrentCourse(int? id)
+        {
+            var course = _context.Course.Include(a => a.Users)
+                 .Include(a => a.Modules)
+                .ThenInclude(a => a.Activities)
+                .FirstOrDefault(a => a.Id == id);
+          
+            var students = course.Users.Count();
+
+            var assignments = await _context.Activity.Where(c => c.ActivityType.ActivityTypeName == "Assignment" && c.Module.CourseId == id)
+              .OrderBy(a => a.StartDate)
+              .Select(a => new TeacherAssignmentsViewModel
+              {
+                  Id = a.Id,
+                  Name = a.ActivityName,
+                  DueTime = a.EndDate,
+                  Finished = a.Documents.Where(d => d.IsFinished.Equals(true)).Count() * 100 / students
+              })
+              .ToListAsync();
+             var model = new CurrentViewModel
+            {
+                course = course,
+              Assignments = assignments
+            };
+
+            return model;
+        }
+            [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Teacher(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
+            var current = await CurrentCourse(id);
+            var currentCourse = current.course;
 
+
+            if (current.course.Modules.Count == 0)
+
+                return View(new TeacherViewModel
+                {
+                    Current = new CurrentViewModel
+                    {
+                        course = current.course,
+
+                        Assignments = null,
+                    },
+                    AssignmentList = null,
+                    ModuleList = null,
+                    ActivityList = null
+                });
 
             var assignmentList = await AssignmentListTeacher(id);
             var moduleList = await GetTeacherModuleListAsync(id);
             var module = moduleList.Find(y => y.IsCurrentModule);
             var activityList = new List<ActivityListViewModel>();
-
+            
           
 
             if (module != null)
@@ -218,9 +275,10 @@ namespace Lexicon_LMS.Controllers
 
             var model = new TeacherViewModel
             {
-                AssignmentList = assignmentList,
+                Current= current,
                 ModuleList = moduleList,
-                ActivityList = activityList
+                ActivityList = activityList,
+                AssignmentList = assignmentList
 
             };
 
