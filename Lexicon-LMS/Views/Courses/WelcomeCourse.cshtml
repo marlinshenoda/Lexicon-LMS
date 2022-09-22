@@ -8,14 +8,16 @@
 
         <div class="col-8">
             <h2>
-              Welcome in @Model.course.CourseName
+              @Model.course.CourseName
             </h2>
 
              <hr />
             <p>
                  @Model.course.Description
                  <h6>Duration</h6>
-                 @Model.course.StartDate<span>:</span>
+                 <h6>Start</h6>
+                 @Model.course.StartDate
+                 <h6>End</h6>
                  @Model.course.EndDate
                  
               

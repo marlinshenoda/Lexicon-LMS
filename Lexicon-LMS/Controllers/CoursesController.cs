@@ -201,7 +201,7 @@ namespace Lexicon_LMS.Controllers
             //});
 
             var assignmentList = await AssignmentListTeacher(id);
-            var moduleList = await GetTeacherModuleListAsync(id);
+            var moduleList = await GetModuleListAsync(id);
             var module = moduleList.Find(y => y.IsCurrentModule);
             var activityList = new List<ActivityListViewModel>();
 
@@ -275,7 +275,7 @@ namespace Lexicon_LMS.Controllers
             return assignments;
         }
 
-        public async Task<List<ModuleViewModel>> GetTeacherModuleListAsync(int? id)
+        public async Task<List<ModuleViewModel>> GetModuleListAsync(int? id)
         {
             var timeNow = DateTime.Now;
 
@@ -349,7 +349,7 @@ namespace Lexicon_LMS.Controllers
                     ActivityList = GetModuleActivityListAsync((int)id).Result,
                 };
 
-                return PartialView("TeacherModuleAndActivityPartial", teacherModel);
+                return PartialView("ModuleAndActivityPartial", teacherModel);
             }
 
             return BadRequest();
