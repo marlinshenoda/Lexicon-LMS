@@ -411,14 +411,13 @@ namespace Lexicon_LMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> FileUpload(ActivityListViewModel viewModel)
+        public async Task<IActionResult> FileUpload([Bind(Prefix = "item")]ActivityListViewModel viewModel)
         {
 
             var fullPath = await UploadFile(viewModel);
             //var DocumentFile = viewModel.UploadedFile;
             //var DocumentPath = Path.GetFileName("Upload");
 
-            //skapa ny document-etity och spara (glöm ej använda ciewModel.Id för att koppla till aktivity
             var document = new Core.Entities.Document()
             {
                 DocumentName = viewModel.UploadedFile.FileName,
@@ -437,15 +436,14 @@ namespace Lexicon_LMS.Controllers
             return View("Index");
         }
 
-        public async Task<string> UploadFile(ActivityListViewModel viewModel)
+        public async Task<string> UploadFile([Bind(Prefix = "item")]ActivityListViewModel viewModel)
         {
-            //plocka ut kursnamn, modulnamn, och aktivitetsnamn
             var courseName = _context.Course.FirstOrDefault(c => c.Id == viewModel.CourseId).CourseName;
-            var moduleName = _context.Module.FirstOrDefault(c => c.ModulName == viewModel.ModuleModulName);
-            var activityName = _context.Activity.FirstOrDefault(c => c.ActivityName == viewModel.ActivityName);
+            var moduleName = _context.Module.FirstOrDefault(c => c.Id == viewModel.ModuleId);
+            var activityName = _context.Activity.FirstOrDefault(c => c.Id == viewModel.Id);
 
 
-            var pToFile = $"~/upload/{Path.Combine(viewModel.ModuleModulName, "~/Upload")}/{(viewModel.ModuleModulName, "~/Upload")}/{(viewModel.ActivityName, "~/Upload")}";
+            var pToFile = $"~/upload/{Path.Combine(viewModel.Name, "~/Upload")}/{(viewModel.ModuleModulName, "~/Upload")}/{(viewModel.ActivityName, "~/Upload")}";
             var path = Path.Combine(webHostEnvironment.WebRootPath, pToFile);
 
             
@@ -456,7 +454,6 @@ namespace Lexicon_LMS.Controllers
 
             }
 
-            //plocka ut filnamnet ur viewModel.UploadedFile.FileName
             string fileName = Path.GetFileName(viewModel.UploadedFile.FileName);
             
             var fullPath = Path.Combine(path, fileName);
