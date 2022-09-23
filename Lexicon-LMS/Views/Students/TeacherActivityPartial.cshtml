@@ -40,7 +40,9 @@
             </td>
             <td>
                     <form enctype="multipart/form-data" asp-action="FileUpload" method="post">
-                        <input type="hidden" asp-for="@item.Id">
+                        <input type="hidden" asp-for="@item.CourseId" />
+                        <input type="hidden" asp-for="@item.ModuleId" />
+                        <input type="hidden" asp-for="@item.Id" />
                         <div class="form-group">
                             <input asp-for="@item.UploadedFile" type="file" />
                         </div>

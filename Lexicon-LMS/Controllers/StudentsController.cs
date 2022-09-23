@@ -350,11 +350,14 @@ namespace Lexicon_LMS.Controllers
             var model = await _context.Activity
                 .Include(a => a.ActivityType)
                 .Include(a => a.Documents)
+                .Include(a => a.Module)
                 .Where(a => a.Module.Id == id)
                 .OrderBy(a => a.StartDate)
                 .Select(a => new ActivityListViewModel
                 {
                     Id = a.Id,
+                    ModuleId = a.ModuleId,
+                    CourseId = a.Module.CourseId,
                     ActivityName = a.ActivityName,
                     StartDate = a.StartDate,
                     EndDate = a.EndDate,
@@ -466,63 +469,87 @@ namespace Lexicon_LMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> FileUpload(ActivityListViewModel viewModel)
+        public async Task<IActionResult> FileUpload([Bind(Prefix = "item")]ActivityListViewModel viewModel)
         {
-            await UploadFile(viewModel.UploadedFile);
-            var DocumentFile = viewModel.UploadedFile;
+
+            var fullPath = await UploadFile(viewModel);
+            //var DocumentFile = viewModel.UploadedFile;
             //var DocumentPath = Path.GetFileName("Upload");
 
-            //skapa ny document-etity och spara (glöm ej använda ciewModel.Id för att koppla till aktivity
             var document = new Core.Entities.Document()
             {
-                DocumentName = DocumentFile.Name,
-                FilePath = $"/Upload",
+                DocumentName = viewModel.UploadedFile.FileName,
+                FilePath = fullPath,
                 CourseId = viewModel.CourseId
             };
 
 
-            var documentPath = $"/Upload";
-            document.FilePath = documentPath;
-            var path = Path.Combine(webHostEnvironment.WebRootPath, documentPath);
+            //add
+            //savechangeews
+            await _context.SaveChangesAsync();
+            //var documentPath = $"~/Upload/";
+            //document.FilePath = documentPath;
+            //var path = Path.Combine(webHostEnvironment.WebRootPath, documentPath);
             TempData["msg"] = "File uploaded successfully";
             return View("Index");
         }
 
-        public async Task<bool> UploadFile(IFormFile file)
+        public async Task<string> UploadFile([Bind(Prefix = "item")]ActivityListViewModel viewModel)
         {
-            //var pToFile = $"upload/{Path.Combine(file.CourseName, "upload")}/{file.ModuleName}/{file.ActivityName}";
-            //var test = Path.Combine(webHostEnvironment.WebRootPath, pToFile);
-            //if (!Directory.Exists(test))
+            var courseName = _context.Course.FirstOrDefault(c => c.Id == viewModel.CourseId).CourseName;
+            var moduleName = _context.Module.FirstOrDefault(c => c.Id == viewModel.ModuleId);
+            var activityName = _context.Activity.FirstOrDefault(c => c.Id == viewModel.Id);
+
+
+            var pToFile = $"~/upload/{Path.Combine(viewModel.Name, "~/Upload")}/{(viewModel.ModuleModulName, "~/Upload")}/{(viewModel.ActivityName, "~/Upload")}";
+            var path = Path.Combine(webHostEnvironment.WebRootPath, pToFile);
+
+            
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+
+            }
+
+            string fileName = Path.GetFileName(viewModel.UploadedFile.FileName);
+            
+            var fullPath = Path.Combine(path, fileName);
+
+            using (FileStream FileStream = new FileStream(fullPath, FileMode.Create))
+            {
+                //plocka ur IformFile ur vymodellen
+                viewModel.UploadedFile.CopyTo(FileStream);
+                //var File = ActivityListViewModel.UploadedFile.CopyTo(FileStream)
+                 //viewModel.FileSt.CopyTo(fullPath FileStream);
+            }
+
+            return fullPath;
+            //string path = "";
+            //bool isCopy = false;
+            //try
             //{
-            //    Directory.CreateDirectory(test);
+            //    if (file.Length > 0)
+            //    {
+            //        string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+            //        path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Upload"));
+            //        using (var filestream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
+            //        {
+            //            await file.CopyToAsync(filestream);
+            //        }
+            //        isCopy = true;
+            //    }
+            //    else
+            //    {
+            //        isCopy = false;
+            //    }
 
             //}
-
-            string path = "";
-            bool isCopy = false;
-            try
-            {
-                if (file.Length > 0)
-                {
-                    string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
-                    path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Upload"));
-                    using (var filestream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
-                    {
-                        await file.CopyToAsync(filestream);
-                    }
-                    isCopy = true;
-                }
-                else
-                {
-                    isCopy = false;
-                }
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return isCopy;
+            //catch (Exception)
+            //{
+            //    throw;
+            //}
+            //return isCopy;
         }
     }
 }
