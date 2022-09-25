@@ -10,20 +10,24 @@ using Lexicon_LMS.Data;
 using Microsoft.AspNetCore.Authorization;
 using Lexicon_LMS.Core.Entities.ViewModel;
 using Lexicon_LMS.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 namespace Lexicon_LMS.Controllers
 {
+    [Authorize]
     public class CoursesController : Controller
     {
         private readonly Lexicon_LMSContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public CoursesController(Lexicon_LMSContext context)
+        public CoursesController(Lexicon_LMSContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Courses
-        [Authorize]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Index()
         {
               return _context.Course != null ? 
@@ -173,7 +177,6 @@ namespace Lexicon_LMS.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> CourseInfo(int? id)
         {
             if (id == null)
@@ -229,6 +232,7 @@ namespace Lexicon_LMS.Controllers
 
         public async Task<CurrentViewModel> CurrentCourse(int? id)
         {
+            var userId = _userManager.GetUserId(User);
             var course = _context.Course.Include(a => a.Users)
                  .Include(a => a.Modules)
                 .ThenInclude(a => a.Activities)

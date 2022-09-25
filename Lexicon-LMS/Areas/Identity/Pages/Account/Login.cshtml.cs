@@ -118,7 +118,8 @@ namespace Lexicon_LMS.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User logged in.");
                     //return LocalRedirect(returnUrl); 
-                    return  LocalRedirect("/Courses/WelcomePage");
+                    return  LocalRedirect("~/User/WelcomePage");
+                    //return RedirectToAction("WelcomePage", "Courses");
                 }
                 if (result.RequiresTwoFactor)
                 {

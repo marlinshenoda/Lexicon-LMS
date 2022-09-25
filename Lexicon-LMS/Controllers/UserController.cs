@@ -17,6 +17,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Lexicon_LMS.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly Lexicon_LMSContext _context;
@@ -33,7 +34,7 @@ namespace Lexicon_LMS.Controllers
 
         }
 
-        // GET: StudentsController
+        // GET: UserController
         public async Task<ActionResult> WelcomePage()
         {
             var userId = _userManager.GetUserId(User);
@@ -48,12 +49,19 @@ namespace Lexicon_LMS.Controllers
             //})
             //.FirstOrDefaultAsync(u => u.Id == userId);// _context.Users.Find(_userManager.GetUserId(User));
 
-            var viewModel = mapper.ProjectTo<StudentCourseViewModel>(_context.Users).FirstOrDefault(u => u.Id == userId);
-          
+            //var viewModel = mapper.ProjectTo<StudentCourseViewModel>(_context.Users).FirstOrDefault(u => u.Id == userId);
+            var viewModel =  mapper.Map<StudentCourseViewModel>(_context.Users.Include(u => u.Course).FirstOrDefault(u => u.Id == userId));
+            
             return View(viewModel);
         }
 
-        // GET: StudentsController
+        public async Task<ActionResult> Index2()
+        {
+            return View();
+                         
+        }
+
+        // GET: UserController
         public async Task<ActionResult> Index()
         {
             var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
@@ -69,7 +77,7 @@ namespace Lexicon_LMS.Controllers
         
             return View(await viewModel.ToListAsync());
         }
- 
+
         //public async Task<IActionResult> Welcome(int? id)
         //{
         //    var viewModel = await _context.Course
@@ -86,9 +94,9 @@ namespace Lexicon_LMS.Controllers
         //    return View(Details);
 
 
-       // }
+        // }
 
-        // GET: StudentsController/Details/5
+        // GET: UserController/Details/5
         public ActionResult Details(int id)
         {
             return View();
@@ -112,7 +120,7 @@ namespace Lexicon_LMS.Controllers
             return View(studentV);
         }
 
-        // POST: StudentsController/Create
+        // POST: UserController/Create
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
@@ -135,14 +143,14 @@ namespace Lexicon_LMS.Controllers
 
         }
 
-        // GET: StudentsController/Edit/5
+        // GET: UserController/Edit/5
         [Authorize(Roles = "Teacher")]
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: StudentsController/Edit/5
+        // POST: UserController/Edit/5
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
@@ -158,13 +166,13 @@ namespace Lexicon_LMS.Controllers
             }
         }
 
-        // GET: StudentsController/Delete/5
+        // GET: UserController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: StudentsController/Delete/5
+        // POST: UserController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
@@ -208,15 +216,6 @@ namespace Lexicon_LMS.Controllers
         //    })
         //    .FirstOrDefaultAsync(u => u.Id == userId);// _context.Users.Find(_userManager.GetUserId(User));
         //}
-       
-      
-
-     
-   
-
-
-
-
             //}
             //return View(viewModel);
       //  }
