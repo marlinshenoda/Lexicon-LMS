@@ -8,10 +8,15 @@ using System.Threading.Tasks;
 
 namespace Lexicon_LMS.Core.Entities.ViewModel
 {
-    public class CreateModuleViewModule
+    public class CreateModuleViewModel
     {
+        public int id { get; set; }
+
+        [DisplayName("Course (temp)")]
         public int CourseId { get; set; }
+        [DisplayName("Name")]
         public string ModuleName { get; set; }
+        [DisplayName("Description")]
         public string ModuleDescription { get; set; }
         [DisplayName("Start Time")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-ddTHH:mm}")]

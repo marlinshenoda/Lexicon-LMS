@@ -1,0 +1,42 @@
+﻿@model CreateModuleViewModel
+
+ 
+@{ Layout = null; }
+
+<h1>Create</h1>
+
+<h4>Module</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="testform" asp-action="Create"  >
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+               <div class="form-group">
+                <input type="hidden" asp-for="CourseId"  class="form-control" />
+                   </div>
+            <div class="form-group">
+                <label asp-for="ModuleName" class="control-label"></label>
+                <input asp-for="ModuleName" class="form-control" />
+                <span asp-validation-for="ModuleName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ModuleDescription" class="control-label"></label>
+                <input asp-for="ModuleDescription" class="form-control" />
+                <span asp-validation-for="ModuleDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ModuleStartDate" class="control-label"></label>
+                <input asp-for="ModuleStartDate" class="form-control" />
+                <span asp-validation-for="ModuleStartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ModuleEndDate" class="control-label"></label>
+                <input asp-for="ModuleEndDate" class="form-control" />
+                <span asp-validation-for="ModuleEndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create"onsubmit="return jQueryAjaxPost(this);" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

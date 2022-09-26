@@ -1,19 +1,17 @@
-﻿@model CourseViewModel
+﻿@model IEnumerable<Module>
 
 @{
     ViewData["Title"] = "Index";
 }
-<h1>
-    @Html.DisplayFor(model => model.CourseName)
-</h1>
+
 <p>
-    <a class="btn btn-success" asp-action="Create">Create New</a>
+    <a class="btn btn-success" @*asp-action="Create"*@ data-toggle="ajax-modal" data-target="#createModule" data-url="@Url.Action($"Create" )>Create New</a>
 </p>
 <div class="accordion" id="accordionExample">
          <div class="panel-group" id="accordionY">
             @{int ij = 1;}
             
-   @foreach (var item in Model.Modules) {
+   @foreach (var item in Model) {
            <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
       <button class="accordion-button accordion-collapse collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@ij"  aria-expanded="true" aria-controls="collapseOne">

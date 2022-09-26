@@ -51,7 +51,7 @@ namespace Lexicon_LMS.Controllers
                     Id = x.Id,
                     ActivityName = x.ActivityName,
                     StartDate = x.StartDate,
-                    EndDate = x.EndDate,
+                   // EndDate = x.EndDate,
                     ActivityTypeActivityTypeName = x.ActivityType.ActivityTypeName,
                     //ModuleId = x.Module.Id,
 
@@ -73,7 +73,7 @@ namespace Lexicon_LMS.Controllers
             {
                 return NotFound();
             }
-
+            
             var activity = await _context.Activity
                 .Include(a => a.ActivityType)
                 .Include(a => a.Module)

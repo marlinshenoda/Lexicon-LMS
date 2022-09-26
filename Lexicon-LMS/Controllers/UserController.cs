@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Bogus.DataSets;
 using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Core.Entities.ViewModel;
@@ -23,7 +24,7 @@ namespace Lexicon_LMS.Controllers
     public class UserController : Controller
     {
         private readonly Lexicon_LMSContext _context;
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly UserManager<User> _userManager;
 
@@ -32,7 +33,7 @@ namespace Lexicon_LMS.Controllers
             _context = context;
             this.webHostEnvironment = webHostEnvironment;
             _userManager = userManager;
-            this.mapper = mapper;
+            this._mapper = mapper;
 
         }
 
@@ -52,15 +53,22 @@ namespace Lexicon_LMS.Controllers
             //.FirstOrDefaultAsync(u => u.Id == userId);// _context.Users.Find(_userManager.GetUserId(User));
 
             //var viewModel = mapper.ProjectTo<StudentCourseViewModel>(_context.Users).FirstOrDefault(u => u.Id == userId);
-            var viewModel =  mapper.Map<StudentCourseViewModel>(_context.Users.Include(u => u.Course).FirstOrDefault(u => u.Id == userId));
+            var viewModel =  _mapper.Map<StudentCourseViewModel>(_context.Users.Include(u => u.Course).FirstOrDefault(u => u.Id == userId));
             
             return View(viewModel);
         }
 
-        public async Task<ActionResult> Index2()
+        public async Task<ActionResult> StudentsByCourseIdPage()
         {
-            return View();
-                         
+            var user = await _userManager.GetUserAsync(User);
+
+            var viewModelStudents = await _context.Users
+                .Include(u => u.Course)
+                .Where(u => u.CourseId == user.CourseId)
+                .ProjectTo<StudentViewModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return viewModelStudents is null ? NotFound() : View(viewModelStudents);
         }
 
         // GET: UserController
@@ -195,7 +203,7 @@ namespace Lexicon_LMS.Controllers
             {
                 Id = x.Id,
                 CourseId = x.CourseId,
-                CourseName = x.Course.CourseName,
+                CourseCourseName = x.Course.CourseName,
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 Email = x.Email,
@@ -204,6 +212,23 @@ namespace Lexicon_LMS.Controllers
                 ImagePicture = x.ImagePicture
 
             }).Where(s => s.CourseId!=null);
+        }
+
+        private IQueryable<StudentViewModel> GetStudents2()
+        {
+            return _context.Users.Select(x => new StudentViewModel
+            {
+                Id = x.Id,
+                CourseId = x.CourseId,
+                CourseCourseName = x.Course.CourseName,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                Email = x.Email,
+                PhoneNumber = x.PhoneNumber,
+                UserName = x.UserName,
+                ImagePicture = x.ImagePicture
+
+            }).Where(s => s.CourseId != null);
         }
         //public async Task<IActionResult> WelcomeCourse(int? id)
         //{
@@ -218,13 +243,13 @@ namespace Lexicon_LMS.Controllers
         //    })
         //    .FirstOrDefaultAsync(u => u.Id == userId);// _context.Users.Find(_userManager.GetUserId(User));
         //}
-            //}
-            //return View(viewModel);
-      //  }
-            public async Task<IActionResult> TeacherHome()
+        //}
+        //return View(viewModel);
+        //  }
+        public async Task<IActionResult> TeacherHome()
             {
             var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
-            var viewModel = await mapper.ProjectTo<CourseViewModel>(_context.Course.Include(a => a.Modules).Include(a => a.Documents))
+            var viewModel = await _mapper.ProjectTo<CourseViewModel>(_context.Course.Include(a => a.Modules).Include(a => a.Documents))
                 .OrderBy(s => s.Id)
               .ToListAsync();
             if (logedinUser != null && logedinUser.CourseId != null)
@@ -242,7 +267,7 @@ namespace Lexicon_LMS.Controllers
                     Id = x.Id,
                     ActivityName = x.ActivityName,
                     StartDate = x.StartDate,
-                    EndDate = x.EndDate,
+                    //EndDate = x.EndDate,
                     ActivityTypeActivityTypeName = x.ActivityType.ActivityTypeName,
                     //UploadedFile = (IFormFile)x.Documents
 

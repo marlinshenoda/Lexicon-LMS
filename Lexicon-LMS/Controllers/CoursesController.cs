@@ -1,4 +1,4 @@
-﻿using System;
+﻿  using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -243,7 +243,7 @@ namespace Lexicon_LMS.Controllers
 
             var assignments = await _context.Activity.Where(c => c.ActivityType.ActivityTypeName == "Assignment" && c.Module.CourseId == id)
               .OrderBy(a => a.StartDate)
-              .Select(a => new TeacherAssignmentsViewModel
+              .Select(a => new AssignmentsViewModel
               {
                   Id = a.Id,
                   Name = a.ActivityName,
@@ -261,19 +261,19 @@ namespace Lexicon_LMS.Controllers
         }
 
 
-        public async Task<List<TeacherAssignmentListViewModel>> AssignmentListTeacher(int? id)
+        public async Task<List<AssignmentListViewModel>> AssignmentListTeacher(int? id)
         {
             var students = _context.Course.Find(id);
 
 
             var assignments = await _context.Activity
                 .Where(a => a.ActivityType.ActivityTypeName == "Assignment" && a.Module.CourseId == id)
-                .Select(a => new TeacherAssignmentListViewModel
+                .Select(a => new AssignmentListViewModel
                 {
                     Id = a.Id,
                     Name = a.ActivityName,
                     StartDate = a.StartDate,
-                    EndDate = a.EndDate,
+                    DateEndDate = a.EndDate,
                 })
                 .ToListAsync();
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lexicon_LMS.Core.Entities.ViewModel
 {
-    public class TeacherAssignmentsViewModel
+    public class AssignmentsViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

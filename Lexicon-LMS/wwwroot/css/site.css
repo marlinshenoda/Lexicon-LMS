@@ -139,12 +139,15 @@ body {
         box-shadow: none;
     }
 
-.btn-dark
+.btn-black
  {
     border-radius: 30px;
     width: 100%;
 }
-
+.btn-succs {
+    border-radius: 30px;
+    width: 100%;
+}
 #current #btn-upload-course-doc i,
 #assignments #btn-teacher-add-assignment i {
     top: 7px;
