@@ -18,7 +18,7 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
         public DateTime StartDate { get; set; }
 
         [DisplayName("End Time")]
-        public DateTime EndDate  => StartDate.AddDays(14);
+        public DateTime EndDate { get; set; }
         public bool IsCurrentModule { get; set; }
     }
 }
