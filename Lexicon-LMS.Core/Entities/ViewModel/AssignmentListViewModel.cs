@@ -19,7 +19,7 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
 
         [DisplayName("End Time")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
-        public DateTime DateEndDate  => StartDate.AddDays(7);
+        public DateTime DateEndDate { get; set; }
 
         [DisplayName("Finished")]
         public double Finished { get; set; }
