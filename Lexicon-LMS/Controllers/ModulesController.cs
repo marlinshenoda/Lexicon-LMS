@@ -111,7 +111,7 @@ namespace Lexicon_LMS.Controllers
                 _context.Add(module);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("MainPage", "Students", new { id = viewModel.CourseId }
+                return RedirectToAction("CourseInfo", "Courses", new { id = viewModel.CourseId }
                
                  );
               
