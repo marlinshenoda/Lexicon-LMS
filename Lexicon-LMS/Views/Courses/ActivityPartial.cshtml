@@ -39,7 +39,7 @@
                 @Html.DisplayFor(modelItem => item.ActivityTypeActivityTypeName)
             </td>
             <td>
-                    <form enctype="multipart/form-data" asp-action="FileUpload" method="post">
+                    <form enctype="multipart/form-data" asp-controller="User" asp-action="FileUpload" method="post">
                         <input type="hidden" asp-for="@item.CourseId" />
                         <input type="hidden" asp-for="@item.ModuleId" />
                         <input type="hidden" asp-for="@item.Id" />
@@ -57,7 +57,8 @@
                     @foreach (var document in item.Documents)
                     {
                        @* <a href="">@document.DocumentName</a>*@
-                        <a asp-action="DownLoadFile" asp-route-filepath="@document.FilePath">@document.DocumentName</a>
+@*                        <a asp-controller="User" asp-action="DownloadFile" asp-route-filepath="@document.FilePath">@document.DocumentName</a>*@
+                       <a href="@($"\\{@document.FilePath}")" download>@document.DocumentName</a>
                     }
             </td>
             <td>
