@@ -55,25 +55,25 @@
             </td>
 
 
-            <td>
+                <td>
                     @foreach (var document in item.Documents)
                     {
-                       @* <a href="">@document.DocumentName</a>*@
-@*                        <a asp-controller="User" asp-action="DownloadFile" asp-route-filepath="@document.FilePath">@document.DocumentName</a>*@
-                       <a href="@($"\\{@document.FilePath}")" download>@document.DocumentName</a>
+                        @* <a href="">@document.DocumentName</a>*@
+                        @*                        <a asp-controller="User" asp-action="DownloadFile" asp-route-filepath="@document.FilePath">@document.DocumentName</a>*@
+                        <a href="@($"\\{@document.FilePath}")" download>@document.DocumentName</a>
                     }
-            </td>
-            <td>
-              <div class="col-sm-4 ">
+                </td>
+                <td>
+                    <div class="col-sm-4 ">
                         <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
-                <span>
+                            <span>
                                 <i class="bi bi-upload" src="~/wwwroot/upload.svg"></i>
-                </span>    
-        </a>
-      </div>
-            </td>
-        </tr>
-}
+                            </span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
