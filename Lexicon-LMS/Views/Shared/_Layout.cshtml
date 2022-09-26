@@ -42,11 +42,11 @@
                         }
                         else if (User.IsInRole("Student"))
                         {
-                            <li class="nav-item">
+                            @*<li class="nav-item">
                                 <a class="nav-link text-white" asp-area="" asp-controller="Students" asp-action="Teacher"></a>
-                            </li> 
+                            </li> *@
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Students" asp-action="Teacher">Students</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="StudentsByCourseIdPage">Students</a>
                             </li>
                         }
                     </ul>
