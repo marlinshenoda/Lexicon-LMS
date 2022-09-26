@@ -73,7 +73,7 @@ namespace Lexicon_LMS.Controllers
             {
                 return NotFound();
             }
-
+            
             var activity = await _context.Activity
                 .Include(a => a.ActivityType)
                 .Include(a => a.Module)

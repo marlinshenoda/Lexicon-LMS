@@ -19,7 +19,7 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
         public string UserName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
-        public string CourseName { get; set; } = string.Empty;
+        public string CourseCourseName { get; set; } = string.Empty;
         public int? CourseId { get; set; }
 
     }

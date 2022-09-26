@@ -22,7 +22,6 @@ namespace Lexicon_LMS.Data
             CreateMap<Course, CourseViewModel>();
             CreateMap<Module, CreateModuleViewModule>().ReverseMap();
 
-
             CreateMap<User, StudentViewModel>();
             CreateMap<User, StudentCourseViewModel>();
             CreateMap<Module, ModuleViewModel>();
