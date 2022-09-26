@@ -19,6 +19,18 @@
                 @Html.DisplayNameFor(model => model.ActivityTypeActivityTypeName)
             </th>
             <th>Documents</th>
+            
+
+            @if (User.IsInRole("Teacher"))
+            {
+                @*<th><a asp-action="Create" asp-controller="Activities" asp-route-id="@Model.First().CourseId">Add Activity</a></th>*@
+                <th><a asp-action="Create" asp-controller="Activities" asp-route-id="">Add Activity</a></th>
+                
+            }
+            else if (User.IsInRole("Student"))
+            {
+                <th></th>
+            }
 
             <th></th>
         </tr>
