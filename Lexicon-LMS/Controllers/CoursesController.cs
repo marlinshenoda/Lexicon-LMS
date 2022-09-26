@@ -312,7 +312,9 @@ namespace Lexicon_LMS.Controllers
                     StartDate = a.StartDate,
                     EndDate = a.EndDate,
                     ActivityTypeActivityTypeName = a.ActivityType.ActivityTypeName,
-                    Documents = a.Documents
+                    Documents = a.Documents,
+                    CourseId = a.Module.CourseId,
+                    ModuleId = a.ModuleId
                 })
                 .ToListAsync();
 

@@ -23,12 +23,14 @@ namespace Lexicon_LMS.Controllers
 
         private readonly IMapper mapper;
 
+        private static int ModuleId;
+
         public ActivitiesController(UserManager<User> userManager, Lexicon_LMSContext context, IMapper mapper)
         {
             _context = context;
             _userManager = userManager;
             this.mapper = mapper;
-
+            ModuleId = 0;
         }
 
         // GET: Activities
@@ -88,13 +90,13 @@ namespace Lexicon_LMS.Controllers
 
         // GET: Activities/Create
         [Authorize(Roles = "Teacher")]
-        public IActionResult Create()
+        public IActionResult Create(int id)
         {
+            ModuleId = id;
             ViewData["ActivityTypeId"] = new SelectList(_context.Set<ActivityType>(), "Id", "ActivityTypeName");
             ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "Id", "Id");
             return View();
         }
-
 
 
 
@@ -105,10 +107,11 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ActivityName,Description,StartDate,EndDate,ModuleId,ActivityTypeId")] Activity activity)
+        public async Task<IActionResult> Create([Bind("Id,ActivityName,Description,StartDate,EndDate,ActivityTypeId")] Activity activity)
         {
             if (ModelState.IsValid)
             {
+                activity.ModuleId = ModuleId;
                 _context.Add(activity);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

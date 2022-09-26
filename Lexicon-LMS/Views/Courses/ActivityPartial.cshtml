@@ -23,8 +23,11 @@
 
             @if (User.IsInRole("Teacher"))
             {
-                @*<th><a asp-action="Create" asp-controller="Activities" asp-route-id="@Model.First().CourseId">Add Activity</a></th>*@
-                <th><a asp-action="Create" asp-controller="Activities" asp-route-id="">Add Activity</a></th>
+                @*<th><a asp-action="Create" asp-controller="Activities" asp-route-id="">Add Activity</a></th>*@
+                @if(Model.Any()){
+
+                <th><a asp-action="Create" asp-controller="Activities" asp-route-id="@Model.First().ModuleId">Add Activity</a></th>
+                }
                 
             }
             else if (User.IsInRole("Student"))
@@ -70,6 +73,7 @@
 
                     }
             </td>
+                
             <td>
               <div class="col-sm-4 ">
                         <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
