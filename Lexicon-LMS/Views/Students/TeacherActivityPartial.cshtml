@@ -56,8 +56,8 @@
             <td>
                     @foreach (var document in item.Documents)
                     {
-                        <a href="">@document.DocumentName</a>
-
+                       @* <a href="">@document.DocumentName</a>*@
+                        <a asp-action="DownLoadFile" asp-route-filepath="@document.FilePath">@document.DocumentName</a>
                     }
             </td>
             <td>

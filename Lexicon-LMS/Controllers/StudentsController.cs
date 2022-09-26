@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Reflection.Metadata;
@@ -210,6 +211,7 @@ namespace Lexicon_LMS.Controllers
             var moduleList = await GetTeacherModuleListAsync(id);
             var module = moduleList.Find(y => y.IsCurrentModule);
             var activityList = new List<ActivityListViewModel>();
+            var documentList = new List<ActivityListViewModel>();
 
           
 
@@ -220,7 +222,10 @@ namespace Lexicon_LMS.Controllers
             {
                 AssignmentList = assignmentList,
                 ModuleList = moduleList,
-                ActivityList = activityList
+                ActivityList = activityList,
+        //ToDo!!        //Documents = documentList
+                
+                
 
             };
 
@@ -285,6 +290,14 @@ namespace Lexicon_LMS.Controllers
                 .ToListAsync();
 
             return assignments;
+        }
+
+
+        public IActionResult DownLoadFile(string filepath)
+        {
+            //create path to file!
+            //var path = Path.Combine(.........
+            return File(System.IO.File.ReadAllBytes(filepath), "application/octet-stream");
         }
    
         private async Task<List<ActivityListViewModel>> GetModuleActivityListAsync(int id)
@@ -433,7 +446,9 @@ namespace Lexicon_LMS.Controllers
             //document.FilePath = documentPath;
             //var path = Path.Combine(webHostEnvironment.WebRootPath, documentPath);
             TempData["msg"] = "File uploaded successfully";
-            return View("Index");
+            return RedirectToAction(
+               "Teacher",
+               new { id = viewModel.CourseId });
         }
 
         public async Task<string> UploadFile([Bind(Prefix = "item")]ActivityListViewModel viewModel)
@@ -442,12 +457,14 @@ namespace Lexicon_LMS.Controllers
             var moduleName = _context.Module.FirstOrDefault(c => c.Id == viewModel.ModuleId);
             var activityName = _context.Activity.FirstOrDefault(c => c.Id == viewModel.Id);
 
-
-            var pToFile = $"~/upload/{Path.Combine(viewModel.Name, "~/Upload")}/{(viewModel.ModuleModulName, "~/Upload")}/{(viewModel.ActivityName, "~/Upload")}";
-            var path = Path.Combine(webHostEnvironment.WebRootPath, pToFile);
+            var PathToFile = Path.Combine(webHostEnvironment.WebRootPath,
+                                          viewModel.CourseId.ToString(),
+                                          viewModel.ModuleId.ToString(),
+                                          viewModel.Id.ToString());
+           // var pathToFile = $"~/upload/{Path.Combine(viewModel.Name, "~/Upload")}/{(viewModel.ModuleModulName, "~/Upload")}/{(viewModel.ActivityName, "~/Upload")}";
+            var path = Path.Combine(webHostEnvironment.WebRootPath, PathToFile);
 
             
-
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
