@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Reflection.Metadata;
@@ -198,21 +199,144 @@ namespace Lexicon_LMS.Controllers
         //public async Task<IActionResult> WelcomeCourse(int? id)
         //{
 
-        //    var user = await _context.Course.Select(u => new StudentCourseViewModel
-        //    {
-        //        Id = u.Id,
-        //        CourseName = u.Course.CourseName,
-        //        CourseDescription = u.Course.Description,
-        //        Documents = u.Documents
-        //        //Add more....
-        //    })
-        //    .FirstOrDefaultAsync(u => u.Id == userId);// _context.Users.Find(_userManager.GetUserId(User));
-        //}
-       
+
+            var assignmentList = await AssignmentListTeacher(id);
+            var moduleList = await GetTeacherModuleListAsync(id);
+            var module = moduleList.Find(y => y.IsCurrentModule);
+            var activityList = new List<ActivityListViewModel>();
+            var documentList = new List<ActivityListViewModel>();
+
+          
+
+            if (module != null)
+                activityList = await GetModuleActivityListAsync(module.Id);
+
+            var model = new TeacherViewModel
+            {
+                AssignmentList = assignmentList,
+                ModuleList = moduleList,
+                ActivityList = activityList,
+        //ToDo!!        //Documents = documentList
+                
+                
+
+            };
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+        public async Task<IActionResult> GetTeacherActivityAjax(int? id)
+        {
+            if (id == null) return BadRequest();
+
+            if (Request.IsAjax())
+            {
+                var module = await _context.Module.FirstOrDefaultAsync(m => m.Id == id);
+                var modules = await _context.Module
+                    .Where(m => m.CourseId == module.CourseId)
+                    .OrderBy(m => m.StartDate)
+                    .Select(m => new ModuleViewModel
+                    {
+                        Id = m.Id,
+                        Name = m.ModulName,
+                        StartDate = m.StartDate,
+                        EndDate = m.EndDate,
+                        IsCurrentModule = false
+
+                    })
+                    //.FirstOrDefaultAsync(m => m.Id == id);
+                   .ToListAsync();
+
+
+                var teacherModel = new TeacherViewModel()
+                {
+                    ModuleList = modules,
+                    ActivityList = GetModuleActivityListAsync((int)id).Result,
+                };
+
+                return PartialView("TeacherModuleAndActivityPartial", teacherModel);
+            }
+
+            return BadRequest();
+        }
       
 
      
+        public async Task<List<TeacherAssignmentListViewModel>> AssignmentListTeacher(int? id)
+        {
+            var students = _context.Course.Find(id);
+
+
+            var assignments = await _context.Activity
+                .Where(a => a.ActivityType.ActivityTypeName == "Assignment" && a.Module.CourseId == id)
+                .Select(a => new TeacherAssignmentListViewModel
+                {
+                    Id = a.Id,
+                    Name = a.ActivityName,
+                    StartDate = a.StartDate,
+                    EndDate = a.EndDate,
+                })
+                .ToListAsync();
+
+            return assignments;
+        }
+
+
+        public IActionResult DownLoadFile(string filepath)
+        {
+            //create path to file!
+            //var path = Path.Combine(.........
+            return File(System.IO.File.ReadAllBytes(filepath), "application/octet-stream");
+        }
    
+        private async Task<List<ActivityListViewModel>> GetModuleActivityListAsync(int id)
+        {
+            var model = await _context.Activity
+                .Include(a => a.ActivityType)
+                .Include(a => a.Documents)
+                .Include(a => a.Module)
+                .Where(a => a.Module.Id == id)
+                .OrderBy(a => a.StartDate)
+                .Select(a => new ActivityListViewModel
+                {
+                    Id = a.Id,
+                    ModuleId = a.ModuleId,
+                    CourseId = a.Module.CourseId,
+                    ActivityName = a.ActivityName,
+                    StartDate = a.StartDate,
+                    EndDate = a.EndDate,
+                    ActivityTypeActivityTypeName = a.ActivityType.ActivityTypeName,
+                    Documents = a.Documents
+                })
+                .ToListAsync();
+
+            return model;
+        }
+        public async Task<List<ModuleViewModel>> GetTeacherModuleListAsync(int? id)
+        {
+            var timeNow = DateTime.Now;
+
+            var modules = await _context.Module.Include(a => a.Course)
+                .Where(a => a.Course.Id == id)
+                .Select(a => new ModuleViewModel
+                {
+                    Id = a.Id,
+                    Name = a.ModulName,
+                    StartDate = a.StartDate,
+                    EndDate = a.EndDate,
+                    IsCurrentModule = false
+                })
+                .OrderBy(m => m.StartDate)
+                .ToListAsync();
+
+         
+
+            return modules;
+        }
 
 
 
@@ -315,7 +439,9 @@ namespace Lexicon_LMS.Controllers
             //document.FilePath = documentPath;
             //var path = Path.Combine(webHostEnvironment.WebRootPath, documentPath);
             TempData["msg"] = "File uploaded successfully";
-            return View("Index");
+            return RedirectToAction(
+               "Teacher",
+               new { id = viewModel.CourseId });
         }
 
         public async Task<string> UploadFile([Bind(Prefix = "item")]ActivityListViewModel viewModel)
@@ -324,12 +450,14 @@ namespace Lexicon_LMS.Controllers
             var moduleName = _context.Module.FirstOrDefault(c => c.Id == viewModel.ModuleId);
             var activityName = _context.Activity.FirstOrDefault(c => c.Id == viewModel.Id);
 
-
-            var pToFile = $"~/upload/{Path.Combine(viewModel.Name, "~/Upload")}/{(viewModel.ModuleModulName, "~/Upload")}/{(viewModel.ActivityName, "~/Upload")}";
-            var path = Path.Combine(webHostEnvironment.WebRootPath, pToFile);
+            var PathToFile = Path.Combine(webHostEnvironment.WebRootPath,
+                                          viewModel.CourseId.ToString(),
+                                          viewModel.ModuleId.ToString(),
+                                          viewModel.Id.ToString());
+           // var pathToFile = $"~/upload/{Path.Combine(viewModel.Name, "~/Upload")}/{(viewModel.ModuleModulName, "~/Upload")}/{(viewModel.ActivityName, "~/Upload")}";
+            var path = Path.Combine(webHostEnvironment.WebRootPath, PathToFile);
 
             
-
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
