@@ -264,7 +264,7 @@ namespace Lexicon_LMS.Controllers
                     Id = x.Id,
                     ActivityName = x.ActivityName,
                     StartDate = x.StartDate,
-                    EndDate = x.EndDate,
+                    //EndDate = x.EndDate,
                     ActivityTypeActivityTypeName = x.ActivityType.ActivityTypeName,
                     //ModuleId = x.Module.Id,
 

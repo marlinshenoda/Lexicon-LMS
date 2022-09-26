@@ -18,7 +18,7 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
         public DateTime StartDate { get; set; }
         [DisplayName("End Time")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
-        public DateTime EndDate { get; set; }
+        public DateTime EndDate  => StartDate.AddDays(7);
         [DisplayName("Activity Type")]
         public string ActivityTypeActivityTypeName{ get; set; }
         public int ModuleId { get; set; }

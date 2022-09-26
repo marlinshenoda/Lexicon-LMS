@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lexicon_LMS.Core.Entities.ViewModel
 {
-    public class TeacherAssignmentListViewModel
+    public class AssignmentListViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -19,7 +19,7 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
 
         [DisplayName("End Time")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
-        public DateTime EndDate { get; set; }
+        public DateTime DateEndDate  => StartDate.AddDays(7);
 
         [DisplayName("Finished")]
         public double Finished { get; set; }
