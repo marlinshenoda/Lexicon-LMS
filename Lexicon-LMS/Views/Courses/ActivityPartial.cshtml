@@ -8,8 +8,8 @@
 {
     @if (Model.Any())
     {
-
-        <a asp-action="Create" asp-controller="Activities" asp-route-id="@Model.FirstOrDefault().ModuleId">Add Activity</a>
+        <a onclick="showInPopup('@Url.Action($"Create","Activities", new {id=Model.FirstOrDefault().ModuleId},Context.Request.Scheme)','New Activity')">Popup Add</a>
+        @*<a asp-action="Create" asp-controller="Activities" asp-route-id="@Model.FirstOrDefault().ModuleId">Add Activity</a>*@
     }
 
 }
