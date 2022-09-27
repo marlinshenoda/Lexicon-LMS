@@ -18,7 +18,7 @@ showInPopup = (url, title) => {
            // const modal = $('#form-modal');
                 $('#form-modal .modal-body').html(res);
             $('#form-modal .modal-title').html(title);
-            let form = document.querySelector('#testform');
+           let form = document.querySelector('#testform');
             console.log(form);
             $.validator.unobtrusive.parse(form);
         

@@ -1,16 +1,17 @@
-﻿@model CreateModuleViewModel
+﻿@model ModuleEditViewModel
 
- 
-@{ Layout = null; }
+@{
+    ViewData["Title"] = "Edit";
+}
 
+<h1>Edit Module</h1>
 
-<hr />
 <div class="row">
     <div class="col-md-4">
-        <form id="testform" asp-action="Create"  >
+        <form id="test" asp-action="Edit"  >
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                <div class="form-group">
-                <input type="hidden" asp-for="CourseId"  class="form-control" />
+                <input type="hidden" asp-for="ModuleId"  class="form-control" />
                    </div>
             <div class="form-group">
                 <label asp-for="ModuleName" class="control-label"></label>
@@ -33,8 +34,11 @@
                 <span asp-validation-for="ModuleEndDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create"onsubmit="return jQueryAjaxPost(this);" class="btn btn-primary" />
+                <input type="submit" value="Edit"onsubmit="return jQueryAjaxPost(this);" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
+
+
+
