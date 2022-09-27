@@ -39,6 +39,8 @@
                 @Html.DisplayFor(modelItem => item.ActivityTypeActivityTypeName)
             </td>
             <td>
+                    @if (User.IsInRole("Teacher") || item.ActivityTypeActivityTypeName.Equals("Assignment"))
+                    {
                     <form enctype="multipart/form-data" asp-controller="User" asp-action="FileUpload" method="post">
                         <input type="hidden" asp-for="@item.CourseId" />
                         <input type="hidden" asp-for="@item.ModuleId" />
@@ -50,9 +52,8 @@
                             <input class="btn btn-primary" type="submit" value="Upload" />
                         </div>
                     </form>
+                }
             </td>
-
-
                 <td>
                     @foreach (var document in item.Documents)
                     {

@@ -348,9 +348,11 @@ namespace Lexicon_LMS.Controllers
             //document.FilePath = documentPath;
             //var path = Path.Combine(webHostEnvironment.WebRootPath, documentPath);
             TempData["msg"] = "File uploaded successfully";
-            return RedirectToAction(
-               "Teacher",
-               new { id = viewModel.Id });
+            return LocalRedirect("~/User/WelcomePage");
+            //return RedirectToAction(
+            //   "~/Courses/CourseInfo",
+            //   new { id = viewModel.Id });
+
         }
 
         [HttpGet]
