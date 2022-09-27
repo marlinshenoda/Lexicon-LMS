@@ -136,16 +136,16 @@ namespace Lexicon_LMS.Controllers
                 errorMessage = "Module end time is equal to its start time";
                 return false;
             }
-            //  Module ModuleStartTime must be >= course start time  
-            //var courseStartTime = GetCourseStartTime(courseId);
-            //if (startTime < courseStartTime)
-            //{
-            //    errorMessage = $"Module start time is before course start time ({courseStartTime}) ";
-            //    return false;
-            //}
-            //var modules = _context.Module
-            //  .Where(m => m.CourseId == courseId)
-            //  .ToList();
+           // Module ModuleStartTime must be >= course start time
+            var courseStartTime = GetCourseStartTime(courseId);
+            if (startTime < courseStartTime)
+            {
+                errorMessage = $"Module start time is before course start time ({courseStartTime}) ";
+                return false;
+            }
+            var modules = _context.Module
+              .Where(m => m.CourseId == courseId)
+              .ToList();
 
 
             return true;
@@ -208,7 +208,7 @@ namespace Lexicon_LMS.Controllers
 
             // Validate start and end time
             var errorMessage = "";
-            if (!IsModuleTimeCorrect(ref errorMessage, module.CourseId, viewModel.ModuleStartDate, viewModel.ModuleStartDate, viewModel.ModuleId))
+            if (!IsModuleTimeCorrect(ref errorMessage, module.CourseId, viewModel.ModuleStartDate, viewModel.ModuleEndDate, viewModel.ModuleId))
             {
                 TempData["ValidationError"] = errorMessage;
                 return Json(new { redirectToUrl = Url.Action("Edit", "Modules", new { id = module.Id }) });
@@ -238,36 +238,11 @@ namespace Lexicon_LMS.Controllers
                         throw;
                     }
                 }
-                return Json(new { redirectToUrl = Url.Action("CourseInfo", "Courses", new { id = module.CourseId }) });
+                return RedirectToAction("CourseInfo", "Courses", new {id=module.CourseId} );
             }
-            ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Id", module.CourseId);
+          //  ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Id", module.CourseId);
             return View(module);
-            //if (id != module.Id)
-            //{
-            //    return NotFound();
-            //}
-
-            //if (ModelState.IsValid)
-            //{
-            //    try
-            //    {
-            //        _context.Update(module);
-            //        await _context.SaveChangesAsync();
-            //    }
-            //    catch (DbUpdateConcurrencyException)
-            //    {
-            //        if (!ModuleExists(module.Id))
-            //        {
-            //            return NotFound();
-            //        }
-            //        else
-            //        {
-            //            throw;
-            //        }
-            //    }
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //return View(module);
+           
         }
 
         // GET: Modules/Delete/5
@@ -306,9 +281,9 @@ namespace Lexicon_LMS.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("CourseInfo", "Courses", new { id = module.CourseId });
         }
 
-       
+
     }
 }

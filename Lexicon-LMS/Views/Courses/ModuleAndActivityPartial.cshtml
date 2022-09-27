@@ -9,7 +9,7 @@
         @if(User.IsInRole("Teacher"))
         {
         <div>
-    <h2 style="margin: 5px 25px 20px 0px">Modules<a  onclick="showInPopup('@Url.Action($"Create","Modules", new {id=Model.CourseId},Context.Request.Scheme)','New Module')"   ><img style="margin: 0px 0px 5px 5px" id="btn-create" src="~/plus.png"  /></a></h2>
+    <h2 style="margin: 5px 25px 20px 0px">Modules<a  onclick="showInPopup('@Url.Action($"Create","Modules", new {id= Model.CourseId@*Model.Current.course.Id*@},Context.Request.Scheme)','Add New Module')"   ><img style="margin: 0px 0px 5px 5px" id="btn-create" src="~/plus.png"  /></a></h2>
         </div>
          }
  

@@ -29,19 +29,18 @@
             <a asp-controller="Modules" asp-action="Details" asp-route-id="@item.Id">
                 <img id="info-module-icon" class="icon-img" src="~/info_black.svg" />
             </a>
+
         </div>
     </div>
     @if (User.IsInRole("Teacher"))
     {
         <div class="row row-module-btn-icons">
             <div class="col-sm-10">
-                <a asp-controller="Documents" asp-action="UploadModuleDoc" asp-route-id="@item.Id">
-                    <img class="icon-img" src="~/share.svg" />
-                </a>
-                <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.Id">
+            
+                <a onclick="showPopup('@Url.Action($"Edit","Modules", new {id=item.Id},Context.Request.Scheme)','Edit Module')" @*asp-route-id="@item.Id"*@>
                     <img class="icon-img" src="~/edit.svg" />
                 </a>
-                <a asp-controller="Modules" asp-action="Delete" asp-route-id="@item.Id">
+                <a onclick="showPop('@Url.Action($"Delete","Modules", new {id=item.Id},Context.Request.Scheme)','Delete Module')">
                     <img class="icon-img" src="~/delete.svg" />
                 </a>
             </div>
