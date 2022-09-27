@@ -21,6 +21,10 @@
             <th>Documents</th>
 
             <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -55,7 +59,7 @@
                     </form>
                 }
             </td>
-                <td>
+                
             <td>
                 @Html.DisplayFor(modelItem => item.ActivityName)
             </td>
@@ -71,7 +75,6 @@
                             </span>
                         </a>
                     </div>
->>>>>>>>> Temporary merge branch 2
 
 
                 <td>
@@ -83,7 +86,6 @@
                     }
                 </td>
                 <td>
-<<<<<<<<< Temporary merge branch 1
                         <div class="col-sm-4 ">
                             <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
                                 <span>
@@ -91,7 +93,6 @@
                                 </span>
                             </a>
                         </div>
-=========
                     <div class="col-sm-4 ">
                         <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
                             <span>
@@ -99,7 +100,6 @@
                             </span>
                         </a>
                     </div>
->>>>>>>>> Temporary merge branch 2
                 </td>
             </tr>
         }
