@@ -17,6 +17,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Finished)
             </th>
+            <th>Documents</th>
             <th></th>
         </tr>
     </thead>
@@ -35,10 +36,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Finished)
             </td>
-            <td>
-             
-               
-            </td>
+                    {
+                        @* <a href="">@document.DocumentName</a>*@
+                        @*                        <a asp-controller="User" asp-action="DownloadFile" asp-route-filepath="@document.FilePath">@document.DocumentName</a>*@
+                        <a href="@($"\\{@document.FilePath}")" download>@document.DocumentName</a>
+                    }
         </tr>
 }
     </tbody>
