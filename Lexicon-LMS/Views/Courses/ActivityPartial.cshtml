@@ -1,7 +1,18 @@
 ﻿@model IEnumerable<ActivityListViewModel>
 
 
-    <h2 >Activities</h2>
+
+<h2>Activities</h2>
+
+@if (User.IsInRole("Teacher"))
+{
+    @if (Model.Any())
+    {
+
+        <a asp-action="Create" asp-controller="Activities" asp-route-id="@Model.First().ModuleId">Add Activity</a>
+    }
+
+}
 
 <table class="table  table-striped">
     <thead class="table-dark">
@@ -20,21 +31,6 @@
             </th>
             <th>Documents</th>
             
-
-            @if (User.IsInRole("Teacher"))
-            {
-                @*<th><a asp-action="Create" asp-controller="Activities" asp-route-id="">Add Activity</a></th>*@
-                @if(Model.Any()){
-
-                <th><a asp-action="Create" asp-controller="Activities" asp-route-id="@Model.First().ModuleId">Add Activity</a></th>
-                }
-                
-            }
-            else if (User.IsInRole("Student"))
-            {
-                <th></th>
-            }
-
             <th></th>
         </tr>
     </thead>
@@ -74,15 +70,15 @@
                     }
             </td>
                 
-            <td>
+            @*<td>
               <div class="col-sm-4 ">
                         <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
                 <span>
                                 <i class="bi bi-upload" src="~/wwwroot/upload.svg"></i>
                 </span>    
-        </a>
-      </div>
-            </td>
+                            </a>
+                        </div>
+            </td>*@
         </tr>
 }
     </tbody>

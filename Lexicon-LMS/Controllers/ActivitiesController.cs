@@ -92,18 +92,18 @@ namespace Lexicon_LMS.Controllers
         [Authorize(Roles = "Teacher")]
         public IActionResult Create(int id)
         {
-            ModuleId = id;
+            //ModuleId = id;
             ViewData["ActivityTypeId"] = new SelectList(_context.Set<ActivityType>(), "Id", "ActivityTypeName");
             //ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "Id", "Id");
             Activity Ac = new Activity()
             {
-                ModuleId = id
+                ModuleId = id,
+                StartDate = DateTime.Today,
+                EndDate = DateTime.Today.AddDays(1)
             };
 
-            return View();
+            return View(Ac);
         }
-
-
 
 
         // POST: Activities/Create
@@ -112,18 +112,16 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ActivityName,Description,StartDate,EndDate,ActivityTypeId")] Activity activity)
-        {
-            ModelState.Remove("ModuleId");
+        public async Task<IActionResult> Create([Bind("ActivityName,Description,ModuleId,StartDate,EndDate,ActivityTypeId")] Activity activity)
+        {            
             if (ModelState.IsValid)
             {
-                activity.ModuleId = ModuleId;
                 _context.Add(activity);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ActivityTypeId"] = new SelectList(_context.Set<ActivityType>(), "Id", "ActivityTypeName", activity.ActivityTypeId);
-            ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "Id", "Id", activity.ModuleId);
+            //ViewData["ActivityTypeId"] = new SelectList(_context.Set<ActivityType>(), "Id", "ActivityTypeName", activity.ActivityTypeId);
+            //ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "Id", "Id", activity.ModuleId);
             return View(activity);
         }
 
