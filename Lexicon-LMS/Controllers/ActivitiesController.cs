@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Authorization;
+using Bogus.DataSets;
+using System.Diagnostics;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -95,11 +97,12 @@ namespace Lexicon_LMS.Controllers
             //ModuleId = id;
             ViewData["ActivityTypeId"] = new SelectList(_context.Set<ActivityType>(), "Id", "ActivityTypeName");
             //ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "Id", "Id");
-            Activity Ac = new Activity()
+            Core.Entities.Activity Ac = new Core.Entities.Activity()
             {
                 ModuleId = id,
                 StartDate = DateTime.Today,
                 EndDate = DateTime.Today.AddDays(1)
+                
             };
 
             return View(Ac);
@@ -112,13 +115,16 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ActivityName,Description,ModuleId,StartDate,EndDate,ActivityTypeId")] Activity activity)
+        public async Task<IActionResult> Create([Bind("ActivityName,Description,ModuleId,StartDate,EndDate,ActivityTypeId")] Core.Entities.Activity activity)
         {            
             if (ModelState.IsValid)
             {
                 _context.Add(activity);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                var Module = await _context.Module.FirstOrDefaultAsync(m => m.Id == activity.ModuleId);
+
+                return RedirectToAction("CourseInfo", "Courses", new { id = Module.CourseId.ToString() });
             }
             //ViewData["ActivityTypeId"] = new SelectList(_context.Set<ActivityType>(), "Id", "ActivityTypeName", activity.ActivityTypeId);
             //ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "Id", "Id", activity.ModuleId);
@@ -150,7 +156,7 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ActivityName,Description,StartDate,EndDate,ModuleId,ActivityTypeId")] Activity activity)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ActivityName,Description,StartDate,EndDate,ModuleId,ActivityTypeId")] Core.Entities.Activity activity)
         {
             if (id != activity.Id)
             {
@@ -180,6 +186,13 @@ namespace Lexicon_LMS.Controllers
             ViewData["ActivityTypeId"] = new SelectList(_context.Set<ActivityType>(), "Id", "ActivityTypeName", activity.ActivityTypeId);
             ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "Id", "Id", activity.ModuleId);
             return View(activity);
+        }
+
+        public async Task<IActionResult> BackToCourse(int id)
+        {
+            var Module = await _context.Module.FirstOrDefaultAsync(m => m.Id == id);
+
+            return RedirectToAction("CourseInfo", "Courses", new { id = Module.CourseId.ToString() });
         }
 
         // GET: Activities/Delete/5
