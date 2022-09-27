@@ -5,8 +5,11 @@
     <div class="row  row-modules" >
 
         <div id="col-modules"  class="col-sm-3 text-center">
-
-        @if(User.IsInRole("Teacher"))
+        @if(User.IsInRole("Student"))
+            {
+                 <h2 style="margin: 5px 25px 20px 0px">Modules</h2>
+            }
+            @if(User.IsInRole("Teacher"))
         {
         <div>
     <h2 style="margin: 5px 25px 20px 0px">Modules<a  onclick="showInPopup('@Url.Action($"Create","Modules", new {id= Model.CourseId@*Model.Current.course.Id*@},Context.Request.Scheme)','Add New Module')"   ><img style="margin: 0px 0px 5px 5px" id="btn-create" src="~/plus.png"  /></a></h2>

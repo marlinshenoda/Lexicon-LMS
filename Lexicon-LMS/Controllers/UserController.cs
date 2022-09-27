@@ -269,38 +269,7 @@ namespace Lexicon_LMS.Controllers
 
 
         }
-        //[Authorize(Roles = "Teacher")]
-        //public async Task<IActionResult> TeacherHome(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var Elearnig = await ElearningtListTeacher(id);
-
-        //    var assignmentList = await AssignmentListTeacher(id);
-        //    var moduleList = await GetTeacherModuleListAsync(id);
-        //    var module = moduleList.Find(y => y.IsCurrentModule);
-        //    var activityList = new List<ActivityListViewModel>();
-
-        //    if (module != null)
-        //        activityList = await GetModuleActivityListAsync(module.Id);
-
-        //    var model = new TeacherViewModel
-        //    {
-        //        Elearning = Elearnig,
-        //        AssignmentList = assignmentList,
-        //        ModuleList = moduleList,
-        //        ActivityList = activityList
-        //    };
-
-        //    if (model == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(model);
-        //}
+      
         public IActionResult FileUpload()
         {
             return View();
@@ -334,8 +303,8 @@ namespace Lexicon_LMS.Controllers
             TempData["msg"] = "File uploaded successfully";
             return LocalRedirect("~/User/WelcomePage");
             //return RedirectToAction(
-            //   "~/Courses/CourseInfo",
-            //   new { id = viewModel.Id });
+            //  "CourseInfo","Courses",
+            //  new { id = viewModel.CourseId });
 
         }
 

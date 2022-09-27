@@ -1,4 +1,6 @@
-﻿
+﻿$("button[data-dismiss=modal]").click(function () {
+    $(".modal").modal('hide');
+});
         
 (function () {
     $("#loaderbody").addClass('hide');
