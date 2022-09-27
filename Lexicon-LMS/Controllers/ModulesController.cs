@@ -238,36 +238,11 @@ namespace Lexicon_LMS.Controllers
                         throw;
                     }
                 }
-                return Json(new { redirectToUrl = Url.Action("CourseInfo", "Courses", new { id = module.CourseId }) });
+                return RedirectToAction("CourseInfo", "Courses", new { id = viewModel.CourseId });
             }
-            ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Id", module.CourseId);
+            //ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Id", module.CourseId);
             return View(module);
-            //if (id != module.Id)
-            //{
-            //    return NotFound();
-            //}
-
-            //if (ModelState.IsValid)
-            //{
-            //    try
-            //    {
-            //        _context.Update(module);
-            //        await _context.SaveChangesAsync();
-            //    }
-            //    catch (DbUpdateConcurrencyException)
-            //    {
-            //        if (!ModuleExists(module.Id))
-            //        {
-            //            return NotFound();
-            //        }
-            //        else
-            //        {
-            //            throw;
-            //        }
-            //    }
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //return View(module);
+           
         }
 
         // GET: Modules/Delete/5
