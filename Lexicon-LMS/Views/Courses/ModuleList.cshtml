@@ -29,6 +29,7 @@
             <a asp-controller="Modules" asp-action="Details" asp-route-id="@item.Id">
                 <img id="info-module-icon" class="icon-img" src="~/info_black.svg" />
             </a>
+
         </div>
     </div>
     @if (User.IsInRole("Teacher"))
@@ -39,7 +40,7 @@
                 <a onclick="showPopup('@Url.Action($"Edit","Modules", new {id=item.Id},Context.Request.Scheme)','Edit Module')" @*asp-route-id="@item.Id"*@>
                     <img class="icon-img" src="~/edit.svg" />
                 </a>
-                <a asp-controller="Modules" asp-action="Delete" asp-route-id="@item.Id">
+                <a onclick="showPop('@Url.Action($"Delete","Modules", new {id=item.Id},Context.Request.Scheme)','Delete Module')">
                     <img class="icon-img" src="~/delete.svg" />
                 </a>
             </div>
