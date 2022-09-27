@@ -24,7 +24,9 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
+        @foreach (var item in Model)
+        {
+            <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.ActivityName)
             </td>
@@ -73,6 +75,11 @@
       </div>
             </td>
         </tr>
+        }
+
+
+
+        
 }
     </tbody>
 </table>
