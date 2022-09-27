@@ -87,23 +87,7 @@ namespace Lexicon_LMS.Controllers
             return View(await viewModel.ToListAsync());
         }
 
-        //public async Task<IActionResult> Welcome(int? id)
-        //{
-        //    var viewModel = await _context.Course
-        //        .Select(a => new Course
-        //        {
-        //            CourseName = a.CourseName,
-        //            Description = a.Description,
-        //        })
-        //        .FirstOrDefaultAsync(c => c.Id == id);
-
-        //    var Details = viewModel.CourseName;
-
-
-        //    return View(Details);
-
-
-        // }
+ 
 
         // GET: UserController/Details/5
         public ActionResult Details(int id)

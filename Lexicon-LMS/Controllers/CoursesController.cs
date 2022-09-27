@@ -186,23 +186,6 @@ namespace Lexicon_LMS.Controllers
             var current = await CurrentCourse(id);
             var currentCourse = current.course;
 
-
-            //if (current.course.Modules.Count == 0)
-
-            //    return View(new TeacherViewModel
-            //    {
-            //        Current = new CurrentViewModel
-            //        {
-            //            course = current.course,
-
-            //            Assignments = null,
-            //        },
-            // Orsaskade Error för kurser som hadde inga moduler, assignments och activities
-            //        AssignmentList = null,
-            //        ModuleList = null,
-            //        ActivityList = null
-            //});
-
             var assignmentList = await AssignmentListTeacher(id);
             var moduleList = await GetModuleListAsync(id);
             var module = moduleList.Find(y => y.IsCurrentModule);
@@ -293,10 +276,13 @@ namespace Lexicon_LMS.Controllers
                     EndDate = a.EndDate,
                     IsCurrentModule = false
                 })
+
                 .OrderBy(m => m.StartDate)
                 .ToListAsync();
 
+            var currentModuleId = modules.OrderBy(t => Math.Abs((t.StartDate - timeNow).Ticks)).First().Id;
 
+            SetCurrentModule(modules, currentModuleId);
 
             return modules;
         }
@@ -331,6 +317,9 @@ namespace Lexicon_LMS.Controllers
             if (Request.IsAjax())
             {
                 var module = await _context.Module.FirstOrDefaultAsync(m => m.Id == id);
+
+                if (module is null) return BadRequest();
+
                 var modules = await _context.Module
                     .Where(m => m.CourseId == module.CourseId)
                     .OrderBy(m => m.StartDate)
@@ -346,11 +335,15 @@ namespace Lexicon_LMS.Controllers
                    //.FirstOrDefaultAsync(m => m.Id == id);
                    .ToListAsync();
 
+                SetCurrentModule(modules, (int)id);
+
 
                 var teacherModel = new TeacherViewModel()
                 {
                     ModuleList = modules,
                     ActivityList = GetModuleActivityListAsync((int)id).Result,
+                    CourseId = module.CourseId,  
+                  
                 };
 
                 return PartialView("ModuleAndActivityPartial", teacherModel);
@@ -362,6 +355,22 @@ namespace Lexicon_LMS.Controllers
         private bool CourseExists(int id)
         {
           return (_context.Course?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        private List<ModuleViewModel> SetCurrentModule(List<ModuleViewModel> modules, int currentModuleId)
+        {
+            foreach (var module in modules)
+            {
+                if (module.Id == currentModuleId)
+                {
+                    module.IsCurrentModule = true;
+                }
+                else
+                {
+                    module.IsCurrentModule = false;
+                }
+            }
+
+            return modules;
         }
     }
 }
