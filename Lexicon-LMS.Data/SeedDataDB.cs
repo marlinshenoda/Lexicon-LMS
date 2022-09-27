@@ -58,7 +58,7 @@ namespace Lexicon_LMS.Data
 
             if (db.Course.Count() < 1)
             {
-                string[] courselist = { "Cours 1", "Cours 2", "Cours 3", "Cours 4", "Cours 5" };
+                string[] courselist = { "Course 1", "Course 2", "Course 3", "Course 4", "Course 5" };
                 string[] documentlist = { "Training 1", "Training 2", "Training 3", "Training 4", "Trial" };
                 string[] modulelist = { "Java", "C#", "C++", "SQL", "MVC" };
                 string[] activitylist = { "Activity 1", "Activity 2", "Activity 3", "Activity 4", "Activity 5" };
@@ -170,6 +170,8 @@ namespace Lexicon_LMS.Data
                     Description = "Dena module har info innom " + courselist[i],
                     Activities = GetActivities(activitylist,aT),
                     StartDate = DateTime.Now.AddDays(faker.Random.Int(10, 15)),
+                    EndDate = DateTime.Now.AddDays(faker.Random.Int(20, 25)),
+
                 };
 
                 Modules.Add(temp);
@@ -255,6 +257,8 @@ namespace Lexicon_LMS.Data
                     ActivityName = Activitylist[i],
                     Description = "Dena aktivitet har information för " + title,
                     StartDate = DateTime.Now.AddDays(faker.Random.Int(10, 15)),
+                    EndDate = DateTime.Now.AddDays(faker.Random.Int(15, 20)),
+
                     ActivityType = activityTypes[rn],
                 };
 
