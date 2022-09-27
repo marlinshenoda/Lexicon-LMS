@@ -94,7 +94,12 @@ namespace Lexicon_LMS.Controllers
         {
             ModuleId = id;
             ViewData["ActivityTypeId"] = new SelectList(_context.Set<ActivityType>(), "Id", "ActivityTypeName");
-            ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "Id", "Id");
+            //ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "Id", "Id");
+            Activity Ac = new Activity()
+            {
+                ModuleId = id
+            };
+
             return View();
         }
 
@@ -109,6 +114,7 @@ namespace Lexicon_LMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ActivityName,Description,StartDate,EndDate,ActivityTypeId")] Activity activity)
         {
+            ModelState.Remove("ModuleId");
             if (ModelState.IsValid)
             {
                 activity.ModuleId = ModuleId;
