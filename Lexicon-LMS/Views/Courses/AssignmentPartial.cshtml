@@ -1,5 +1,5 @@
 ﻿
-@model IEnumerable<TeacherAssignmentListViewModel>
+@model IEnumerable<AssignmentListViewModel>
 
     <h1 class="text-center">Assignments</h1>
 <table class="table  table-striped">
@@ -12,7 +12,7 @@
                 @Html.DisplayNameFor(model => model.StartDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EndDate)
+                @Html.DisplayNameFor(model => model.DateEndDate)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Finished)
@@ -30,7 +30,7 @@
                 @Html.DisplayFor(modelItem => item.StartDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
+                @Html.DisplayFor(modelItem => item.DateEndDate)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Finished)

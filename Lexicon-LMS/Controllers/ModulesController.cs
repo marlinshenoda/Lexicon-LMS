@@ -10,6 +10,8 @@ using Lexicon_LMS.Data;
 using Microsoft.AspNetCore.Authorization;
 using Lexicon_LMS.Core.Entities.ViewModel;
 using AutoMapper;
+using Lexicon_LMS.Extensions;
+//using static Lexicon_LMS.Helper;
 
 namespace Lexicon_LMS.Controllers
 {
@@ -51,11 +53,32 @@ namespace Lexicon_LMS.Controllers
         }
 
         // GET: Modules/Create
-        [Authorize(Roles = "Teacher")]
-        public IActionResult Create()
-        {
+        //[Authorize(Roles = "Teacher")]
 
-            return View();
+        public IActionResult Create(int? id)
+        {
+            if (id is null || !CourseExists((int)id))
+            {
+                return NotFound();
+            }
+
+            if (TempData["ValidationError"] != null)
+            {
+                ModelState.AddModelError("", (string)TempData["ValidationError"]);
+            }
+
+            var moduleDefaultStartTime = GetCourseStartTime((int)id).AddHours(8);
+
+            var model = new CreateModuleViewModel
+            {
+                CourseId = (int)id,
+                ModuleStartDate = moduleDefaultStartTime,
+                ModuleEndDate = moduleDefaultStartTime.AddHours(1),
+               
+            };
+           
+            return PartialView("CreateModulePartailView", model);
+
         }
 
         // POST: Modules/Create
@@ -64,43 +87,113 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int id, CreateModuleViewModule module)
+        public async Task<IActionResult> Create(CreateModuleViewModel viewModel)
         {
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
-            
-                var mofdel = mapper.Map<Module>(module);
-
-                var model = new CreateModuleViewModule
+                var errorMessage = "";
+                if (!IsModuleTimeCorrect(ref errorMessage, viewModel.CourseId, viewModel.ModuleStartDate, viewModel.ModuleEndDate, null))
                 {
-                    CourseId = (int)id,
-                    ModuleStartDate = module.ModuleStartDate,
-                    ModuleEndDate = module.ModuleEndDate,
-                    ModuleDescription = module.ModuleDescription,   
-               
-                };
-                _context.Add(mofdel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(module);
-        }
+                    TempData["ValidationError"] = errorMessage;
+                      return Json(new { redirectToUrl = Url.Action("Edit", "Modules", new { id = viewModel.CourseId }) });
 
+                }
+
+                var module = new Module
+                {
+                    CourseId = viewModel.CourseId,
+                    ModulName = viewModel.ModuleName,
+                    Description = viewModel.ModuleDescription,
+                    StartDate = viewModel.ModuleStartDate,
+                    EndDate = viewModel.ModuleEndDate
+                };
+
+                _context.Add(module);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("CourseInfo", "Courses", new { id = viewModel.CourseId }
+               
+                 );
+              
+            }
+
+            return View(viewModel);
+        }
+        private bool ModuleExists(int id)
+        {
+            return _context.Module.Any(e => e.Id == id);
+        }
+        private bool IsModuleTimeCorrect(ref string errorMessage, int courseId, DateTime startTime, DateTime endTime, int? thisModuleId)
+        {
+            // Module starttime must be < module endtime
+            if (endTime < startTime)
+            {
+                errorMessage = "Module end time is before its start time";
+                return false;
+            }
+            if (endTime == startTime)
+            {
+                errorMessage = "Module end time is equal to its start time";
+                return false;
+            }
+            //  Module ModuleStartTime must be >= course start time  
+            //var courseStartTime = GetCourseStartTime(courseId);
+            //if (startTime < courseStartTime)
+            //{
+            //    errorMessage = $"Module start time is before course start time ({courseStartTime}) ";
+            //    return false;
+            //}
+            //var modules = _context.Module
+            //  .Where(m => m.CourseId == courseId)
+            //  .ToList();
+
+
+            return true;
+        }
+        private bool CourseExists(int id)
+        {
+            return _context.Course.Any(e => e.Id == id);
+        }
+        private DateTime GetCourseStartTime(int courseId)
+        {
+            var d = _context.Course.FirstOrDefault(c => c.Id == courseId).StartDate;
+                
+                
+            return new DateTime(d.Year, d.Month, d.Day, 0, 0, 0);
+        }
         // GET: Modules/Edit/5
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Module == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
             var module = await _context.Module.FindAsync(id);
             if (module == null)
             {
                 return NotFound();
             }
-            return View(module);
+
+            if (TempData["ValidationError"] != null)
+            {
+                ModelState.AddModelError("", (string)TempData["ValidationError"]);
+            }
+
+            var viewModel = new ModuleEditViewModel
+            {
+                CourseId = module.CourseId,
+                ModuleId = module.Id,
+                ModuleName = module.ModulName,
+                ModuleDescription = module.Description,
+                ModuleStartDate = module.StartDate,
+                ModuleEndDate = module.EndDate,
+           
+
+            };
+
+            ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Id", module.CourseId);
+            return PartialView("EditModulePartialView", viewModel);
         }
 
         // POST: Modules/Edit/5
@@ -109,19 +202,30 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,  Module module)
+        public async Task<IActionResult> Edit( ModuleEditViewModel viewModel)
         {
-            if (id != module.Id)
+            var module = _context.Module.Find(viewModel.ModuleId);
+
+            // Validate start and end time
+            var errorMessage = "";
+            if (!IsModuleTimeCorrect(ref errorMessage, module.CourseId, viewModel.ModuleStartDate, viewModel.ModuleStartDate, viewModel.ModuleId))
             {
-                return NotFound();
+                TempData["ValidationError"] = errorMessage;
+                return Json(new { redirectToUrl = Url.Action("Edit", "Modules", new { id = module.Id }) });
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    module.ModulName = viewModel.ModuleName;
+                    module.Description = viewModel.ModuleDescription;
+                    module.StartDate = viewModel.ModuleStartDate;
+                    module.EndDate = viewModel.ModuleEndDate;
+
                     _context.Update(module);
                     await _context.SaveChangesAsync();
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -134,9 +238,36 @@ namespace Lexicon_LMS.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return Json(new { redirectToUrl = Url.Action("CourseInfo", "Courses", new { id = module.CourseId }) });
             }
+            ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Id", module.CourseId);
             return View(module);
+            //if (id != module.Id)
+            //{
+            //    return NotFound();
+            //}
+
+            //if (ModelState.IsValid)
+            //{
+            //    try
+            //    {
+            //        _context.Update(module);
+            //        await _context.SaveChangesAsync();
+            //    }
+            //    catch (DbUpdateConcurrencyException)
+            //    {
+            //        if (!ModuleExists(module.Id))
+            //        {
+            //            return NotFound();
+            //        }
+            //        else
+            //        {
+            //            throw;
+            //        }
+            //    }
+            //    return RedirectToAction(nameof(Index));
+            //}
+            //return View(module);
         }
 
         // GET: Modules/Delete/5
@@ -178,9 +309,6 @@ namespace Lexicon_LMS.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ModuleExists(int id)
-        {
-          return (_context.Module?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+       
     }
 }

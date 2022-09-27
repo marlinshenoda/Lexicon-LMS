@@ -2,13 +2,25 @@
 
 <div class="container cont-section" id="cont-modules-and-activities">
     <!--Modules and Activities-->
-    <div class="row" >
-        <div  class="col-sm-3 text-center">
-            <h2 style="margin: 5px 25px 20px 0px">Modules<a asp-controller="Modules" asp-action="Create" ><img style="margin: 0px 0px 5px 5px" id="btn-create" src="/icons/create.svg"  /></a></h2>
-            <partial name="ModuleList" model="@Model.ModuleList" />
+    <div class="row  row-modules" >
+
+        <div id="col-modules"  class="col-sm-3 text-center">
+
+        @if(User.IsInRole("Teacher"))
+        {
+        <div>
+    <h2 style="margin: 5px 25px 20px 0px">Modules<a  onclick="showInPopup('@Url.Action($"Create","Modules", new {id=Model.CourseId},Context.Request.Scheme)','New Module')"   ><img style="margin: 0px 0px 5px 5px" id="btn-create" src="~/plus.png"  /></a></h2>
         </div>
-        <div  class="col-sm-9">
+         }
+ 
+
+        <partial name="ModuleList" model="@Model.ModuleList" />
+        </div>
+        <div id="col-activities" class="col-sm-9">
             <partial name="ActivityPartial" model="@Model.ActivityList" />
         </div>
     </div>
 </div>
+
+
+ 

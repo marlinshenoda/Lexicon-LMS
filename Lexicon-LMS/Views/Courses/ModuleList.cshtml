@@ -13,13 +13,13 @@
                data-ajax-mode="replace-with">
                 @if (item.IsCurrentModule)
                 {
-                    <div type="button" class="btn btn-success btn-module">
+                    <div type="button" class="btn btn-success btn-succs btn-module">
                         @item.Name
                     </div>
                 }
                 else
                 {
-                    <div type="button" class="btn btn-dark btn-module">
+                    <div type="button" class="btn btn-dark btn-black btn-module">
                         @item.Name
                     </div>
                 }
@@ -31,22 +31,24 @@
             </a>
         </div>
     </div>
-
-   @* <div class="row row-module-btn-icons">
-        <div class="col-sm-10">
-            <a asp-controller="Documents" asp-action="UploadModuleDoc" asp-route-id="@item.Id">
-                <img class="icon-img" src="~/icons/share.svg" />
-            </a>
-            <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.Id">
-                <img class="icon-img" src="~/icons/edit.svg" />
-            </a>
-            <a asp-controller="Modules" asp-action="Delete" asp-route-id="@item.Id">
-                <img class="icon-img" src="~/icons/delete.svg" />
-            </a>
+    @if (User.IsInRole("Teacher"))
+    {
+        <div class="row row-module-btn-icons">
+            <div class="col-sm-10">
+                <a asp-controller="Documents" asp-action="UploadModuleDoc" asp-route-id="@item.Id">
+                    <img class="icon-img" src="~/share.svg" />
+                </a>
+                <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.Id">
+                    <img class="icon-img" src="~/edit.svg" />
+                </a>
+                <a asp-controller="Modules" asp-action="Delete" asp-route-id="@item.Id">
+                    <img class="icon-img" src="~/delete.svg" />
+                </a>
+            </div>
+            <div class="col-sm-2">
+            </div>
         </div>
-        <div class="col-sm-2">
-        </div>
-    </div>*@
+    }
 }
 
 

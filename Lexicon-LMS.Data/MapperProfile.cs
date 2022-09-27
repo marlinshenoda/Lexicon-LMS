@@ -20,12 +20,11 @@ namespace Lexicon_LMS.Data
             CreateMap<Activity, ActivityListViewModel>();
             CreateMap<CourseViewModel, Course>();
             CreateMap<Course, CourseViewModel>();
-            CreateMap<Module, CreateModuleViewModule>().ReverseMap();
-
+            CreateMap<Module, CreateModuleViewModel>().ReverseMap();
 
             CreateMap<User, StudentViewModel>();
             CreateMap<User, StudentCourseViewModel>();
-            CreateMap<Module, ModuleViewModel>();
+            CreateMap<Module, ModuleViewModel>().ReverseMap();
             CreateMap<Document, DocumentViewModel>();
 
         }

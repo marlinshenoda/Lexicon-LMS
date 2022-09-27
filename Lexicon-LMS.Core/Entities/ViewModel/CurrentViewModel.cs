@@ -9,7 +9,8 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
     public class CurrentViewModel
     {
         public Course course { get; set; }
-        public ICollection<TeacherAssignmentsViewModel> Assignments { get; set; }
+        public ICollection<AssignmentsViewModel> Assignments { get; set; }
+        public Module Module { get; set; }
 
 
     }

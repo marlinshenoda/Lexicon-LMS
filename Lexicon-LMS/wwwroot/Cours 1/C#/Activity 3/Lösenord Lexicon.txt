@@ -1,0 +1,9 @@
+
+Student
+Ophelia.Johansson@email.com
+StudentPW123!
+
+
+
+teacher@lms.se
+TeacherPW123!

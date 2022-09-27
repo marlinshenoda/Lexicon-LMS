@@ -32,11 +32,45 @@
             <th>Documents</th>
             
             <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ActivityName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ActivityTypeActivityTypeName)
+                </td>
+                <td>
+                    @if ((User.IsInRole("Teacher") || item.ActivityTypeActivityTypeName.Equals("Assignment")))
+                    {
+                    <form enctype="multipart/form-data" asp-controller="User" asp-action="FileUpload" method="post">
+                        <input type="hidden" asp-for="@item.CourseId" />
+                        <input type="hidden" asp-for="@item.ModuleId" />
+                        <input type="hidden" asp-for="@item.Id" />
+                        <div class="form-group">
+                            <input asp-for="@item.UploadedFile" type="file" />
+                        </div>
+                        <div class="form-group">
+                            <input class="btn btn-primary" type="submit" value="Upload" />
+                        </div>
+                    </form>
+                }
+            </td>
+                
             <td>
                 @Html.DisplayFor(modelItem => item.ActivityName)
             </td>
@@ -45,42 +79,41 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ActivityTypeActivityTypeName)
-            </td>
-            <td>
-                    <form enctype="multipart/form-data" asp-action="FileUpload" method="post">
-                        <input type="hidden" asp-for="@item.Id">
-                        <div class="form-group">
-                            <input asp-for="@item.UploadedFile" type="file" />
-                        </div>
-                        <div class="form-group">
-                            <input class="btn btn-primary" type="submit" value="Upload" />
-                        </div>
-                    </form>
-            </td>
+                    <div class="col-sm-4 ">
+                        <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
+                            <span>
+                                <i class="bi bi-upload" src="~/wwwroot/upload.svg"></i>
+                            </span>
+                        </a>
+                    </div>
 
 
-            <td>
+                <td>
                     @foreach (var document in item.Documents)
                     {
-                        <a href="">@document.DocumentName</a>
-
+                        @* <a href="">@document.DocumentName</a>*@
+                        @*                        <a asp-controller="User" asp-action="DownloadFile" asp-route-filepath="@document.FilePath">@document.DocumentName</a>*@
+                        <a href="@($"\\{@document.FilePath}")" download>@document.DocumentName</a>
                     }
-            </td>
-                
-            @*<td>
-              <div class="col-sm-4 ">
-                        <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
-                <span>
-                                <i class="bi bi-upload" src="~/wwwroot/upload.svg"></i>
-                </span>    
+                </td>
+                <td>
+                        <div class="col-sm-4 ">
+                            <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
+                                <span>
+                                    <i class="bi bi-upload" src="~/wwwroot/upload.svg"></i>
+                                </span>
                             </a>
                         </div>
-            </td>*@
-        </tr>
-}
+                    <div class="col-sm-4 ">
+                        <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
+                            <span>
+                                <i class="bi bi-upload" src="~/wwwroot/upload.svg"></i>
+                            </span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 

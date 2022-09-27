@@ -1,4 +1,4 @@
-﻿using System;
+﻿  using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,20 +10,24 @@ using Lexicon_LMS.Data;
 using Microsoft.AspNetCore.Authorization;
 using Lexicon_LMS.Core.Entities.ViewModel;
 using Lexicon_LMS.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 namespace Lexicon_LMS.Controllers
 {
+    [Authorize]
     public class CoursesController : Controller
     {
         private readonly Lexicon_LMSContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public CoursesController(Lexicon_LMSContext context)
+        public CoursesController(Lexicon_LMSContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Courses
-        [Authorize]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Index()
         {
               return _context.Course != null ? 
@@ -173,7 +177,6 @@ namespace Lexicon_LMS.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> CourseInfo(int? id)
         {
             if (id == null)
@@ -183,28 +186,11 @@ namespace Lexicon_LMS.Controllers
             var current = await CurrentCourse(id);
             var currentCourse = current.course;
 
-
-            //if (current.course.Modules.Count == 0)
-
-            //    return View(new TeacherViewModel
-            //    {
-            //        Current = new CurrentViewModel
-            //        {
-            //            course = current.course,
-
-            //            Assignments = null,
-            //        },
-            // Orsaskade Error för kurser som hadde inga moduler, assignments och activities
-            //        AssignmentList = null,
-            //        ModuleList = null,
-            //        ActivityList = null
-            //});
-
             var assignmentList = await AssignmentListTeacher(id);
             var moduleList = await GetModuleListAsync(id);
             var module = moduleList.Find(y => y.IsCurrentModule);
             var activityList = new List<ActivityListViewModel>();
-
+            var documentList = new List<ActivityListViewModel>();
 
 
             if (module != null)
@@ -215,7 +201,8 @@ namespace Lexicon_LMS.Controllers
                 Current = current,
                 ModuleList = moduleList,
                 ActivityList = activityList,
-                AssignmentList = assignmentList
+                AssignmentList = assignmentList,
+                DocumentList = documentList
 
             };
 
@@ -229,6 +216,7 @@ namespace Lexicon_LMS.Controllers
 
         public async Task<CurrentViewModel> CurrentCourse(int? id)
         {
+            var userId = _userManager.GetUserId(User);
             var course = _context.Course.Include(a => a.Users)
                  .Include(a => a.Modules)
                 .ThenInclude(a => a.Activities)
@@ -238,7 +226,7 @@ namespace Lexicon_LMS.Controllers
 
             var assignments = await _context.Activity.Where(c => c.ActivityType.ActivityTypeName == "Assignment" && c.Module.CourseId == id)
               .OrderBy(a => a.StartDate)
-              .Select(a => new TeacherAssignmentsViewModel
+              .Select(a => new AssignmentsViewModel
               {
                   Id = a.Id,
                   Name = a.ActivityName,
@@ -256,19 +244,19 @@ namespace Lexicon_LMS.Controllers
         }
 
 
-        public async Task<List<TeacherAssignmentListViewModel>> AssignmentListTeacher(int? id)
+        public async Task<List<AssignmentListViewModel>> AssignmentListTeacher(int? id)
         {
             var students = _context.Course.Find(id);
 
 
             var assignments = await _context.Activity
                 .Where(a => a.ActivityType.ActivityTypeName == "Assignment" && a.Module.CourseId == id)
-                .Select(a => new TeacherAssignmentListViewModel
+                .Select(a => new AssignmentListViewModel
                 {
                     Id = a.Id,
                     Name = a.ActivityName,
                     StartDate = a.StartDate,
-                    EndDate = a.EndDate,
+                    DateEndDate = a.EndDate,
                 })
                 .ToListAsync();
 
@@ -289,10 +277,13 @@ namespace Lexicon_LMS.Controllers
                     EndDate = a.EndDate,
                     IsCurrentModule = false
                 })
+
                 .OrderBy(m => m.StartDate)
                 .ToListAsync();
 
+            var currentModuleId = modules.OrderBy(t => Math.Abs((t.StartDate - timeNow).Ticks)).First().Id;
 
+            SetCurrentModule(modules, currentModuleId);
 
             return modules;
         }
@@ -329,6 +320,9 @@ namespace Lexicon_LMS.Controllers
             if (Request.IsAjax())
             {
                 var module = await _context.Module.FirstOrDefaultAsync(m => m.Id == id);
+
+                if (module is null) return BadRequest();
+
                 var modules = await _context.Module
                     .Where(m => m.CourseId == module.CourseId)
                     .OrderBy(m => m.StartDate)
@@ -344,11 +338,15 @@ namespace Lexicon_LMS.Controllers
                    //.FirstOrDefaultAsync(m => m.Id == id);
                    .ToListAsync();
 
+                SetCurrentModule(modules, (int)id);
+
 
                 var teacherModel = new TeacherViewModel()
                 {
                     ModuleList = modules,
                     ActivityList = GetModuleActivityListAsync((int)id).Result,
+                    CourseId = module.CourseId,  
+                  
                 };
 
                 return PartialView("ModuleAndActivityPartial", teacherModel);
@@ -360,6 +358,22 @@ namespace Lexicon_LMS.Controllers
         private bool CourseExists(int id)
         {
           return (_context.Course?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        private List<ModuleViewModel> SetCurrentModule(List<ModuleViewModel> modules, int currentModuleId)
+        {
+            foreach (var module in modules)
+            {
+                if (module.Id == currentModuleId)
+                {
+                    module.IsCurrentModule = true;
+                }
+                else
+                {
+                    module.IsCurrentModule = false;
+                }
+            }
+
+            return modules;
         }
     }
 }

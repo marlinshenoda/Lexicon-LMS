@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Bogus.DataSets;
 using Lexicon_LMS.Core.Entities;
 using Lexicon_LMS.Core.Entities.ViewModel;
@@ -10,17 +11,20 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Hosting.Internal;
 using System.Reflection.Metadata;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Lexicon_LMS.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly Lexicon_LMSContext _context;
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly UserManager<User> _userManager;
 
@@ -29,11 +33,11 @@ namespace Lexicon_LMS.Controllers
             _context = context;
             this.webHostEnvironment = webHostEnvironment;
             _userManager = userManager;
-            this.mapper = mapper;
+            this._mapper = mapper;
 
         }
 
-        // GET: StudentsController
+        // GET: UserController
         public async Task<ActionResult> WelcomePage()
         {
             var userId = _userManager.GetUserId(User);
@@ -48,12 +52,26 @@ namespace Lexicon_LMS.Controllers
             //})
             //.FirstOrDefaultAsync(u => u.Id == userId);// _context.Users.Find(_userManager.GetUserId(User));
 
-            var viewModel = mapper.ProjectTo<StudentCourseViewModel>(_context.Users).FirstOrDefault(u => u.Id == userId);
-          
+            //var viewModel = mapper.ProjectTo<StudentCourseViewModel>(_context.Users).FirstOrDefault(u => u.Id == userId);
+            var viewModel =  _mapper.Map<StudentCourseViewModel>(_context.Users.Include(u => u.Course).FirstOrDefault(u => u.Id == userId));
+            
             return View(viewModel);
         }
 
-        // GET: StudentsController
+        public async Task<ActionResult> StudentsByCourseIdPage()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var viewModelStudents = await _context.Users
+                .Include(u => u.Course)
+                .Where(u => u.CourseId == user.CourseId)
+                .ProjectTo<StudentViewModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return viewModelStudents is null ? NotFound() : View(viewModelStudents);
+        }
+
+        // GET: UserController
         public async Task<ActionResult> Index()
         {
             var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
@@ -69,26 +87,10 @@ namespace Lexicon_LMS.Controllers
         
             return View(await viewModel.ToListAsync());
         }
+
  
-        //public async Task<IActionResult> Welcome(int? id)
-        //{
-        //    var viewModel = await _context.Course
-        //        .Select(a => new Course
-        //        {
-        //            CourseName = a.CourseName,
-        //            Description = a.Description,
-        //        })
-        //        .FirstOrDefaultAsync(c => c.Id == id);
 
-        //    var Details = viewModel.CourseName;
-
-
-        //    return View(Details);
-
-
-       // }
-
-        // GET: StudentsController/Details/5
+        // GET: UserController/Details/5
         public ActionResult Details(int id)
         {
             return View();
@@ -112,7 +114,7 @@ namespace Lexicon_LMS.Controllers
             return View(studentV);
         }
 
-        // POST: StudentsController/Create
+        // POST: UserController/Create
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
@@ -135,14 +137,14 @@ namespace Lexicon_LMS.Controllers
 
         }
 
-        // GET: StudentsController/Edit/5
+        // GET: UserController/Edit/5
         [Authorize(Roles = "Teacher")]
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: StudentsController/Edit/5
+        // POST: UserController/Edit/5
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
@@ -158,13 +160,13 @@ namespace Lexicon_LMS.Controllers
             }
         }
 
-        // GET: StudentsController/Delete/5
+        // GET: UserController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: StudentsController/Delete/5
+        // POST: UserController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
@@ -185,7 +187,7 @@ namespace Lexicon_LMS.Controllers
             {
                 Id = x.Id,
                 CourseId = x.CourseId,
-                CourseName = x.Course.CourseName,
+                CourseCourseName = x.Course.CourseName,
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 Email = x.Email,
@@ -194,6 +196,23 @@ namespace Lexicon_LMS.Controllers
                 ImagePicture = x.ImagePicture
 
             }).Where(s => s.CourseId!=null);
+        }
+
+        private IQueryable<StudentViewModel> GetStudents2()
+        {
+            return _context.Users.Select(x => new StudentViewModel
+            {
+                Id = x.Id,
+                CourseId = x.CourseId,
+                CourseCourseName = x.Course.CourseName,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                Email = x.Email,
+                PhoneNumber = x.PhoneNumber,
+                UserName = x.UserName,
+                ImagePicture = x.ImagePicture
+
+            }).Where(s => s.CourseId != null);
         }
         //public async Task<IActionResult> WelcomeCourse(int? id)
         //{
@@ -208,22 +227,13 @@ namespace Lexicon_LMS.Controllers
         //    })
         //    .FirstOrDefaultAsync(u => u.Id == userId);// _context.Users.Find(_userManager.GetUserId(User));
         //}
-       
-      
-
-     
-   
-
-
-
-
-            //}
-            //return View(viewModel);
-      //  }
-            public async Task<IActionResult> TeacherHome()
+        //}
+        //return View(viewModel);
+        //  }
+        public async Task<IActionResult> TeacherHome()
             {
             var logedinUser = _context.Users.Find(_userManager.GetUserId(User));
-            var viewModel = await mapper.ProjectTo<CourseViewModel>(_context.Course.Include(a => a.Modules).Include(a => a.Documents))
+            var viewModel = await _mapper.ProjectTo<CourseViewModel>(_context.Course.Include(a => a.Modules).Include(a => a.Documents))
                 .OrderBy(s => s.Id)
               .ToListAsync();
             if (logedinUser != null && logedinUser.CourseId != null)
@@ -234,13 +244,17 @@ namespace Lexicon_LMS.Controllers
                 .ThenInclude(a => a.ActivityType)
                 .FirstOrDefaultAsync(c => c.Id == logedinUser.CourseId);
 
+
+
                 var activities = course.Modules.SelectMany(m => m.Activities).Select(x => new ActivityListViewModel
                 {
                     Id = x.Id,
                     ActivityName = x.ActivityName,
                     StartDate = x.StartDate,
-                    EndDate = x.EndDate,
+                    //EndDate = x.EndDate,
                     ActivityTypeActivityTypeName = x.ActivityType.ActivityTypeName,
+                    //UploadedFile = (IFormFile)x.Documents
+
                     //ModuleId = x.Module.Id,
 
                     //ModulName = x.Module.ModulName
@@ -293,63 +307,79 @@ namespace Lexicon_LMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> FileUpload(ActivityListViewModel viewModel)
+        public async Task<IActionResult> FileUpload([Bind(Prefix = "item")]ActivityListViewModel viewModel)
         {
-            await UploadFile(viewModel.UploadedFile);
-            var DocumentFile = viewModel.UploadedFile;
+
+            var fullPath = await UploadFile(viewModel);
+            //var DocumentFile = viewModel.UploadedFile;
             //var DocumentPath = Path.GetFileName("Upload");
 
-            //skapa ny document-etity och spara (glöm ej använda ciewModel.Id för att koppla till aktivity
+
             var document = new Core.Entities.Document()
             {
-                DocumentName = DocumentFile.Name,
-                FilePath = $"/Upload",
-                CourseId = viewModel.CourseId
+                DocumentName = viewModel.UploadedFile.FileName,
+                FilePath = fullPath,
+                ActivityId = viewModel.Id
+               // CourseId = viewModel.CourseId
             };
 
 
-            var documentPath = $"/Upload";
-            document.FilePath = documentPath;
-            var path = Path.Combine(webHostEnvironment.WebRootPath, documentPath);
+            //add
+            //savechangeews
+            _context.Add(document);
+            await _context.SaveChangesAsync();
+            //var documentPath = $"~/Upload/";
+            //document.FilePath = documentPath;
+            //var path = Path.Combine(webHostEnvironment.WebRootPath, documentPath);
             TempData["msg"] = "File uploaded successfully";
-            return View("Index");
+            return LocalRedirect("~/User/WelcomePage");
+            //return RedirectToAction(
+            //   "~/Courses/CourseInfo",
+            //   new { id = viewModel.Id });
+
         }
 
-        public async Task<bool> UploadFile(IFormFile file)
+        [HttpGet]
+        public IActionResult DownloadFile(string filepath)
         {
-            //var pToFile = $"upload/{Path.Combine(file.CourseName, "upload")}/{file.ModuleName}/{file.ActivityName}";
-            //var test = Path.Combine(webHostEnvironment.WebRootPath, pToFile);
-            //if (!Directory.Exists(test))
-            //{
-            //    Directory.CreateDirectory(test);
+            var fileName = Path.GetFileName(filepath);
+            var path = Path.Combine(webHostEnvironment.WebRootPath, filepath);
+            var fs = System.IO.File.ReadAllBytes(path);
 
-            //}
+            return File(fs, "application/octet-stream", fileName);
+        }
 
-            string path = "";
-            bool isCopy = false;
-            try
+        public async Task<string> UploadFile([Bind(Prefix = "item")]ActivityListViewModel viewModel)
+        {
+            var courseName = _context.Course.FirstOrDefault(c => c.Id == viewModel.CourseId)?.CourseName;
+            var moduleName = _context.Module.FirstOrDefault(c => c.Id == viewModel.ModuleId)?.ModulName;
+            var activityName = _context.Activity.FirstOrDefault(c => c.Id == viewModel.Id)?.ActivityName;
+
+
+            var PathToFile = Path.Combine(courseName, moduleName, activityName);
+                                          //viewModel.CourseId.ToString(),
+                                          //viewModel.ModuleId.ToString(),
+                                          //viewModel.Id.ToString());
+           // var pathToFile = $"~/upload/{Path.Combine(viewModel.Name, "~/Upload")}/{(viewModel.ModuleModulName, "~/Upload")}/{(viewModel.ActivityName, "~/Upload")}";
+            var path = Path.Combine(webHostEnvironment.WebRootPath, PathToFile);
+
+            
+            if (!Directory.Exists(path))
             {
-                if (file.Length > 0)
-                {
-                    string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
-                    path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Upload"));
-                    using (var filestream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
-                    {
-                        await file.CopyToAsync(filestream);
-                    }
-                    isCopy = true;
-                }
-                else
-                {
-                    isCopy = false;
-                }
+                Directory.CreateDirectory(path);
 
             }
-            catch (Exception)
+
+            string fileName = Path.GetFileName(viewModel.UploadedFile.FileName);
+            
+            var fullPath = Path.Combine(path, fileName);
+            using (FileStream FileStream = new FileStream(fullPath, FileMode.Create))
             {
-                throw;
+                viewModel.UploadedFile.CopyTo(FileStream);
             }
-            return isCopy;
+
+            var savePath = Path.Combine(PathToFile, fileName);
+            return savePath;
         }
     }
 }

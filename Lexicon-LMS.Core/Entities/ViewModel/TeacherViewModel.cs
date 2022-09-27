@@ -9,12 +9,13 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
     public class TeacherViewModel
     {
 
-        public IEnumerable<TeacherAssignmentListViewModel> AssignmentList { get; set; }
+        public IEnumerable<AssignmentListViewModel> AssignmentList { get; set; }
 
         public IEnumerable<ModuleViewModel> ModuleList { get; set; }
         public IEnumerable<ActivityListViewModel> ActivityList { get; set; }
-
         public CurrentViewModel Current { get; set; }
+        public int CourseId { get; set; }
 
+        public List<ActivityListViewModel> DocumentList { get; set; }
     }
 }

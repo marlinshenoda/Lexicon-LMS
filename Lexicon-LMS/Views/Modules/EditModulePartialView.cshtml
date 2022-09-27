@@ -1,0 +1,44 @@
+﻿@model ModuleEditViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit Module</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form id="test" asp-action="Edit"  >
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+               <div class="form-group">
+                <input type="hidden" asp-for="ModuleId"  class="form-control" />
+                   </div>
+            <div class="form-group">
+                <label asp-for="ModuleName" class="control-label"></label>
+                <input asp-for="ModuleName" class="form-control" />
+                <span asp-validation-for="ModuleName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ModuleDescription" class="control-label"></label>
+                <input asp-for="ModuleDescription" class="form-control" />
+                <span asp-validation-for="ModuleDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ModuleStartDate" class="control-label"></label>
+                <input asp-for="ModuleStartDate" class="form-control" />
+                <span asp-validation-for="ModuleStartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ModuleEndDate" class="control-label"></label>
+                <input asp-for="ModuleEndDate" class="form-control" />
+                <span asp-validation-for="ModuleEndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Edit"onsubmit="return jQueryAjaxPost(this);" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
