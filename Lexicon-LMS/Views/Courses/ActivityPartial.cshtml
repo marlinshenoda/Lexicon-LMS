@@ -1,8 +1,8 @@
 ﻿@model IEnumerable<ActivityListViewModel>
 
 
-    <h2 >Activities</h2>
-    <hr/>
+<h2>Activities</h2>
+<hr />
 <table class="table  table-striped">
     <thead class="table-dark">
         <tr>
@@ -24,52 +24,53 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ActivityName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ActivityTypeActivityTypeName)
-            </td>
-            <td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ActivityName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ActivityTypeActivityTypeName)
+                </td>
+                <td>
                     @if ((User.IsInRole("Teacher") || item.ActivityTypeActivityTypeName.Equals("Assignment")))
                     {
-                    <form enctype="multipart/form-data" asp-action="FileUpload" method="post">
+                        <form enctype="multipart/form-data" asp-action="FileUpload" method="post">
                             <input type="hidden" asp-for="@item.CourseId" />
                             <input type="hidden" asp-for="@item.ModuleId" />
                             <input type="hidden" asp-for="@item.Id" />
-                        <div class="form-group">
-                        </div>
-                        <div class="form-group">
-                            <input class="btn btn-primary" type="submit" value="Upload" />
-                        </div>
-                    </form>
+                            <div class="form-group">
+                            </div>
+                            <div class="form-group">
+                                <input class="btn btn-primary" type="submit" value="Upload" />
+                            </div>
+                        </form>
                     }
-            </td>
+                </td>
 
-
-            <td>
+                <td>
                     @foreach (var document in item.Documents)
                     {
                     }
-            </td>
-            <td>
-              <div class="col-sm-4 ">
+                </td>
+                <td>
+                    <div class="col-sm-4 ">
                         <a class="btn btn-success" asp-controller="Documents" asp-action="UploadFile" asp-route-id="@item.Id">
-                <span>
+                            <span>
                                 <i class="bi bi-upload" src="~/wwwroot/upload.svg"></i>
-                </span>    
-        </a>
-      </div>
-            </td>
-        </tr>
-}
+                            </span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
