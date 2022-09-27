@@ -15,6 +15,7 @@ namespace Lexicon_LMS.Core.Entities.ViewModel
         public IEnumerable<ActivityListViewModel> ActivityList { get; set; }
 
         public CurrentViewModel Current { get; set; }
+        public int CourseId { get; set; }
 
     }
 }

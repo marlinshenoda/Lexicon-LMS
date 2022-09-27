@@ -111,7 +111,7 @@ namespace Lexicon_LMS.Controllers
                 _context.Add(module);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("MainPage", "Students", new { id = viewModel.CourseId }
+                return RedirectToAction("CourseInfo", "Courses", new { id = viewModel.CourseId }
                
                  );
               
@@ -165,17 +165,35 @@ namespace Lexicon_LMS.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Module == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
             var module = await _context.Module.FindAsync(id);
             if (module == null)
             {
                 return NotFound();
             }
-            return View(module);
+
+            if (TempData["ValidationError"] != null)
+            {
+                ModelState.AddModelError("", (string)TempData["ValidationError"]);
+            }
+
+            var viewModel = new ModuleEditViewModel
+            {
+                CourseId = module.CourseId,
+                ModuleId = module.Id,
+                ModuleName = module.ModulName,
+                ModuleDescription = module.Description,
+                ModuleStartDate = module.StartDate,
+                ModuleEndDate = module.EndDate,
+           
+
+            };
+
+            ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Id", module.CourseId);
+            return PartialView("EditModulePartialView", viewModel);
         }
 
         // POST: Modules/Edit/5
@@ -184,19 +202,30 @@ namespace Lexicon_LMS.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,  Module module)
+        public async Task<IActionResult> Edit( ModuleEditViewModel viewModel)
         {
-            if (id != module.Id)
+            var module = _context.Module.Find(viewModel.ModuleId);
+
+            // Validate start and end time
+            var errorMessage = "";
+            if (!IsModuleTimeCorrect(ref errorMessage, module.CourseId, viewModel.ModuleStartDate, viewModel.ModuleStartDate, viewModel.ModuleId))
             {
-                return NotFound();
+                TempData["ValidationError"] = errorMessage;
+                return Json(new { redirectToUrl = Url.Action("Edit", "Modules", new { id = module.Id }) });
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    module.ModulName = viewModel.ModuleName;
+                    module.Description = viewModel.ModuleDescription;
+                    module.StartDate = viewModel.ModuleStartDate;
+                    module.EndDate = viewModel.ModuleEndDate;
+
                     _context.Update(module);
                     await _context.SaveChangesAsync();
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -209,9 +238,36 @@ namespace Lexicon_LMS.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return Json(new { redirectToUrl = Url.Action("CourseInfo", "Courses", new { id = module.CourseId }) });
             }
+            ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Id", module.CourseId);
             return View(module);
+            //if (id != module.Id)
+            //{
+            //    return NotFound();
+            //}
+
+            //if (ModelState.IsValid)
+            //{
+            //    try
+            //    {
+            //        _context.Update(module);
+            //        await _context.SaveChangesAsync();
+            //    }
+            //    catch (DbUpdateConcurrencyException)
+            //    {
+            //        if (!ModuleExists(module.Id))
+            //        {
+            //            return NotFound();
+            //        }
+            //        else
+            //        {
+            //            throw;
+            //        }
+            //    }
+            //    return RedirectToAction(nameof(Index));
+            //}
+            //return View(module);
         }
 
         // GET: Modules/Delete/5
