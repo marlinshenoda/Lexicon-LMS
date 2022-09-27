@@ -190,7 +190,7 @@ namespace Lexicon_LMS.Controllers
             var moduleList = await GetModuleListAsync(id);
             var module = moduleList.Find(y => y.IsCurrentModule);
             var activityList = new List<ActivityListViewModel>();
-
+            var documentList = new List<ActivityListViewModel>();
 
 
             if (module != null)
@@ -201,7 +201,8 @@ namespace Lexicon_LMS.Controllers
                 Current = current,
                 ModuleList = moduleList,
                 ActivityList = activityList,
-                AssignmentList = assignmentList
+                AssignmentList = assignmentList,
+                DocumentList = documentList
 
             };
 
@@ -302,7 +303,9 @@ namespace Lexicon_LMS.Controllers
                     StartDate = a.StartDate,
                     EndDate = a.EndDate,
                     ActivityTypeActivityTypeName = a.ActivityType.ActivityTypeName,
-                    Documents = a.Documents
+                    Documents = a.Documents,
+                    CourseId = a.Module.CourseId,
+                    ModuleId = a.ModuleId,
                 })
                 .ToListAsync();
 
