@@ -9,7 +9,7 @@
     @if (Model.Any())
     {
 
-        <a asp-action="Create" asp-controller="Activities" asp-route-id="@Model.First().ModuleId">Add Activity</a>
+        <a asp-action="Create" asp-controller="Activities" asp-route-id="@Model.FirstOrDefault().ModuleId">Add Activity</a>
     }
 
 }
